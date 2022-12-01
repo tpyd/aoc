@@ -6,8 +6,7 @@ pub fn part1(input: String) {
             .map(|x| x.parse::<u32>().unwrap())
             .sum::<u32>()
         )
-        .max()
-        .unwrap();
+        .max().unwrap();
 
     println!("The elf with the most calories has {:?} calories", calories);
 }
