@@ -3,7 +3,7 @@ use std::fs;
 use std::io;
 use std::time::{Duration, Instant};
 
-use aoc::{get_day, noop};
+use aoc_2022::{get_day, noop};
 
 fn fmt_time(ms: f64) -> String {
     if ms <= 1.0 {
