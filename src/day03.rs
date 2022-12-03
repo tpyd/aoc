@@ -1,13 +1,11 @@
-use std::path::PrefixComponent;
-
 use itertools::Itertools;
 use regex::Regex;
 
 pub fn part1(input: String) {
     let items = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let sum: u32 = input
-    .trim()
-    .split('\n')
+        .trim()
+        .split('\n')
         .map(|bag| {
             let mid = bag.len() / 2;
             let (a, b) = bag.split_at(mid);
