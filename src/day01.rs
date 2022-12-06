@@ -8,7 +8,7 @@ pub fn part1(input: String) {
         )
         .max().unwrap();
 
-    println!("The elf with the most calories has {:?} calories", calories);
+    println!("Part 1: {:?}", calories);
 }
 
 pub fn part2(input: String) {
@@ -29,5 +29,5 @@ pub fn part2(input: String) {
         .take(3)
         .sum();
 
-    println!("The top 3 elves has a combined {:?} calories", calories);
+    println!("Part 2: {:?}", calories);
 }

@@ -21,7 +21,7 @@ pub fn part1(input: String) {
         .filter(|x| *x)
         .count();
 
-    println!("Number of assignments where one fully contains the other: {:?}", sum);
+    println!("Part 1: {:?}", sum);
 }
 
 pub fn part2(input: String) {
@@ -45,5 +45,5 @@ pub fn part2(input: String) {
         .filter(|x| *x)
         .count();
 
-    println!("Number of assignments overlaps {:?}", sum);
+    println!("Part 2: {:?}", sum);
 }

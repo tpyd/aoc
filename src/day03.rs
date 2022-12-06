@@ -20,7 +20,7 @@ pub fn part1(input: String) {
         })
         .sum();
 
-    println!("The total sum of priorities are {:?}", sum);
+    println!("Part 1: {:?}", sum);
 }
 
 pub fn part2(input: String) {
@@ -48,5 +48,5 @@ pub fn part2(input: String) {
         })
         .sum();
 
-    println!("The total sum of grouped priorities are {:?}", sum);
+    println!("Part 2: {:?}", sum);
 }

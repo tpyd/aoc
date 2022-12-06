@@ -25,7 +25,7 @@ pub fn part1(input: String) {
         })
         .sum();
 
-    println!("Total score following the strategy guide with guesses: {:?}", sum);
+    println!("Part 1: {:?}", sum);
 }
 
 pub fn part2(input: String) {
@@ -56,5 +56,5 @@ pub fn part2(input: String) {
         })
         .sum();
 
-    println!("Total score following the strategy guide with instructions: {:?}", sum);
+    println!("Part 2: {:?}", sum);
 }
