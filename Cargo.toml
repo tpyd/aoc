@@ -1,5 +1,5 @@
 [package]
-name = "aoc-2022"
+name = "aoc"
 version = "0.1.0"
 authors = ["tpyd <112725276+tpyd@users.noreply.github.com>"]
 edition = "2021"
