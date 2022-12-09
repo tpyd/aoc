@@ -1,5 +1,7 @@
 use itertools::Itertools;
 
+// https://doc.rust-lang.org/std/vec/struct.Vec.html#method.windows
+
 pub fn part1(input: String) {
     let mut i = 0;
 
@@ -25,12 +27,12 @@ pub fn part1(input: String) {
 }
 
 pub fn part2(input: String) {
-    const num_unique: usize = 14;
+    const NUM_UNIQUE: usize = 14;
 
     let mut i = 0;
 
     loop {
-        let substr = &input[i..i+num_unique];
+        let substr = &input[i..i+NUM_UNIQUE];
         let mut valid = true;
 
         // Test each character
@@ -51,7 +53,7 @@ pub fn part2(input: String) {
         i += 1;
     }
 
-    let num = i + num_unique;
+    let num = i + NUM_UNIQUE;
 
     println!("Part 2: {:?}", num);
 }
