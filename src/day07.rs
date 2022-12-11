@@ -5,6 +5,15 @@ enum FileType {
     Dir(Vec<FileType>),
 }
 
+// Lag en vec med bare absolute paths, ikke nested vecs
+// eks
+// /sdg/fas/gs 2352
+// /sdg/fas/ww 14
+// /sdg/he 4900
+//
+// grupper filer
+// regn ut true directory size
+
 pub fn part1(input: String) {
     let input: String = "$ cd /
 $ ls
