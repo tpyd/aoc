@@ -1,5 +1,9 @@
 use itertools::Itertools;
 
+fn get_closest_three(n: i32) -> [i32; 3] {
+    [n-1, n, n+1]
+}
+
 pub fn part1(input: String) {
     let instructions: Vec<(&str, i32)> = input
         .trim()
@@ -54,7 +58,72 @@ pub fn part1(input: String) {
 }
 
 pub fn part2(input: String) {
+    let instructions: Vec<(&str, i32)> = input
+        .trim()
+        .split('\n')
+        .map(|x| {
+            if x.starts_with("noop") {
+                return (x, 0);
+            }
 
+            let (a, b): (&str, &str) = x
+            .trim()
+            .split(' ')
+            .collect_tuple().unwrap();
 
-    println!("Part 2: {:?}", 0);
+            let c = b.parse::<i32>().unwrap();
+
+            (a, c)
+        })
+        .collect();
+
+    let mut cycle = 0;
+    let mut x = 1;
+
+    for (ins, val) in instructions {
+        match ins {
+            "noop" => {
+                cycle += 1;
+                if get_closest_three(x).contains(&cycle) {
+                    print!("#");
+                } else {
+                    print!(".");
+                }
+
+                if cycle % 40 == 0 {
+                    print!("\n");
+                    cycle = 0;
+                }
+            },
+            "addx" => {
+                if get_closest_three(x).contains(&cycle) {
+                    print!("#");
+                } else {
+                    print!(".");
+                }
+                cycle += 1;
+
+                if cycle % 40 == 0 {
+                    print!("\n");
+                    cycle = 0;
+                }
+
+                if get_closest_three(x).contains(&cycle) {
+                    print!("#");
+                } else {
+                    print!(".");
+                }
+                cycle += 1;
+
+                if cycle % 40 == 0 {
+                    print!("\n");
+                    cycle = 0;
+                }
+
+                x += val;
+            },
+            _ => panic!(),
+        }
+
+    }
 }
