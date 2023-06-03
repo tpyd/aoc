@@ -28,10 +28,10 @@ impl Monkey {
             .split(':')
             .collect_vec()[1]
             .trim();
-        
+
         let items: Vec<u128>;
         if itemstr.is_empty() {
-            items = Vec::new(); 
+            items = Vec::new();
         } else {
             items = itemstr
                 .split(',')
@@ -115,7 +115,7 @@ pub fn part1(input: String) {
     for _ in 0..20 {
         for _ in 0..num_monkeys {
             let mut monkey = monkeys.remove(0);
-            
+
             inspections[monkey.number] += monkey.items.len();
 
             for _ in 0..monkey.items.len() {
@@ -153,34 +153,6 @@ pub fn part1(input: String) {
 }
 
 pub fn part2(input: String) {
-    let input = "Monkey 0:
-  Starting items: 79 
-  Operation: new = old * 19
-  Test: divisible by 23
-    If true: throw to monkey 2
-    If false: throw to monkey 3
-
-Monkey 1:
-  Starting items: 
-  Operation: new = old + 6
-  Test: divisible by 19
-    If true: throw to monkey 2
-    If false: throw to monkey 0
-
-Monkey 2:
-  Starting items: 
-  Operation: new = old * old
-  Test: divisible by 13
-    If true: throw to monkey 1
-    If false: throw to monkey 3
-
-Monkey 3:
-  Starting items: 
-  Operation: new = old + 3
-  Test: divisible by 17
-    If true: throw to monkey 0
-    If false: throw to monkey 1";
-
     let mut monkeys = input
         .trim()
         .replace("\r\n", "\n")
@@ -188,10 +160,9 @@ Monkey 3:
         .map(|monkey| Monkey::new(monkey))
         .collect::<Vec<Monkey>>();
 
-    // Replace old*old with old
-    monkeys[2].operation = Box::new(move |x| x);
-
     let num_monkeys = monkeys.len();
+
+    let divisor_product = monkeys.iter().map(|m| m.div_number).product::<u128>();
 
     let mut inspections: Vec<usize> = Vec::new();
     for _ in 0..num_monkeys {
@@ -201,18 +172,16 @@ Monkey 3:
     for round in 0..10_000 {
         for _ in 0..num_monkeys {
             let mut monkey = monkeys.remove(0);
-            
+
             inspections[monkey.number] += monkey.items.len();
 
             for _ in 0..monkey.items.len() {
                 let mut item = monkey.items.remove(0);
-                println!("{:?}: {:?}", round, item);
+                item %= divisor_product;
                 item = (monkey.operation)(item);
 
                 let give_to_monkey: usize;
                 if (monkey.test)(item) {
-                    item /= monkey.div_number;
-                    println!("True on round {:?}, monkey {:?}", round, monkey.number);
                     give_to_monkey = monkey.true_condition;
                 } else {
                     give_to_monkey = monkey.false_condition;
@@ -232,11 +201,10 @@ Monkey 3:
     inspections.sort_unstable();
     inspections.reverse();
 
-    let top1 = inspections[0];
-    let top2 = inspections[1];
+    let top1 = inspections[0] as u128;
+    let top2 = inspections[1] as u128;
 
     let monkey_business = top1 * top2;
-
 
     println!("Part 2: {:?}", monkey_business);
 }
