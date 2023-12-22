@@ -22,7 +22,7 @@ fn parse_list(input: &str) -> Vec<u32> {
         .collect_vec()
 }
 
-pub fn part1(input: String) {
+fn part1(input: String) {
 //     let input = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
 // Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19
 // Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1
@@ -62,7 +62,7 @@ pub fn part1(input: String) {
     println!("{sum}");
 }
 
-pub fn part2(input: String) {
+fn part2(input: String) {
 //     let input = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
 // Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19
 // Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1
@@ -108,4 +108,9 @@ pub fn part2(input: String) {
     }
 
     println!("{sum}");
+}
+
+pub fn run(input: String) {
+    part1(input.clone());
+    part2(input);
 }

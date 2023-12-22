@@ -3,7 +3,7 @@ use std::{arch::x86_64::_MM_FROUND_RAISE_EXC, collections::HashMap};
 use itertools::Itertools;
 
 
-pub fn part1(input: String) {
+fn part1(input: String) {
     let lines: Vec<&str> = input.split('\n').collect();
     let mut sum = 0;
 
@@ -31,7 +31,7 @@ pub fn part1(input: String) {
     println!("{sum}");
 }
 
-pub fn part2(input: String) {
+fn part2(input: String) {
     let words = vec![
         "1", "2", "3", "4", "5", "6", "7", "8", "9",
         "one",
@@ -114,4 +114,9 @@ pub fn part2(input: String) {
     }
 
     println!("{sum}");
+}
+
+pub fn run(input: String) {
+    part1(input.clone());
+    part2(input);
 }

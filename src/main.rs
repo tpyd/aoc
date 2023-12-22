@@ -1,85 +1,67 @@
+use core::panic;
 use std::env;
 use std::fs;
-use std::io;
-use std::time::{Duration, Instant};
 
-use aoc::{get_day, noop};
+use aoc::get_day;
 
-fn fmt_time(ms: f64) -> String {
-    if ms <= 1.0 {
-        let micro_sec = ms * 1000.0;
-        return String::from(format!("{}µs", micro_sec.round()));
-    }
+fn read_input(day: u32) -> String {
+    let cwd = env::current_dir().unwrap();
+    let filename = cwd
+        .join("input")
+        .join("2023")
+        .join("real")
+        .join(format!("day{day:02}.txt"));
 
-    if ms < 1000.0 {
-        let whole_ms = ms.floor();
-        let rem_ms = ms - whole_ms;
-        return String::from(format!("{}ms ", whole_ms) + &fmt_time(rem_ms));
-    }
-
-    let sec: f64 = ms / 1000.0;
-    if sec < 60.0 {
-        let whole_sec = sec.floor();
-        let rem_ms = ms - whole_sec * 1000.0;
-
-        return format!("{}s ", whole_sec) + &fmt_time(rem_ms);
-    }
-
-    let min: f64 = sec / 60.0;
-    return format!("{}m ", min.floor()) + &fmt_time((sec % 60.0) * 1000.0);
+    fs::read_to_string(filename)
+        .expect("Could not find file {filename}")
+        .trim()
+        .to_string()
 }
 
-fn fmt_dur(dur: Duration) -> String {
-    return fmt_time(dur.as_secs_f64() * 1000.0);
+fn read_test_input(day: u32, part: Option<String>) -> String {
+    let part = part.unwrap_or(String::from(""));
+    let cwd = env::current_dir().unwrap();
+    let filename = cwd
+        .join("input")
+        .join("2023")
+        .join("test")
+        .join(format!("day{day:02}{part}.txt"));
+
+    fs::read_to_string(filename)
+        .expect("Could not find file {filename}")
+        .trim()
+        .to_string()
 }
 
 fn main() {
-    // Get day string
     let args: Vec<String> = env::args().collect();
-    let mut day = String::new();
 
-    if args.len() >= 2 {
-        day = args[1].clone();
-    } else {
-        println!("Enter day: ");
-        io::stdin()
-            .read_line(&mut day)
-            .expect("Failed to read line");
-    }
+    let command = args[1].clone();
+    let day_str = args[2].clone();
 
-    // Parse day as number
-    day = day.trim().to_string();
-    let day_num: u32 = match day.parse() {
-        Ok(num) => num,
-        Err(_) => {
-            println!("Invalid day number: {}", day);
-            return;
+    // Example input can be different for part 1 and part 2.
+    // Add option to add "part2" to use example input for part 2
+    let test_part = args.get(3).map(|x| x.clone());
+    if let Some(ref part_text) = test_part {
+        if part_text != "part2" {
+            panic!();
         }
-    };
-
-    // Read input file
-    let cwd = env::current_dir().unwrap();
-    let filename = cwd.join("inputs").join(format!("day{:02}.txt", day_num));
-    println!("Reading {}", filename.display());
-    let input = fs::read_to_string(filename).expect("Error while reading");
-
-    // Get corresponding function
-    let to_run = get_day(day_num);
-
-    // Time it
-    if to_run.0 != noop {
-        println!("Running Part 1");
-        let part1_start = Instant::now();
-        to_run.0(input.clone());
-        let part1_dur = part1_start.elapsed();
-        println!("Took {}", fmt_dur(part1_dur));
     }
 
-    if to_run.1 != noop {
-        println!("Running Part 2");
-        let part2_start = Instant::now();
-        to_run.1(input.clone());
-        let part2_dur = part2_start.elapsed();
-        println!("Took {}", fmt_dur(part2_dur));
+    let day: u32 = day_str.parse().expect("The day needs to be a number");
+
+    let mut input = String::new();
+
+    match command.as_str() {
+        "run" => { input = read_input(day) },
+        "test" => { input = read_test_input(day, test_part) },
+        "bench" => unimplemented!(),
+        "create" => unimplemented!(),
+        "sync" => unimplemented!(),
+        _ => panic!("Unknown command {command}"),
     }
+
+    input = input.trim().replace("\r\n", "\n").to_string();
+
+    get_day(day)(input);
 }

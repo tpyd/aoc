@@ -4,7 +4,7 @@ fn has_symbol(c: &char) -> bool {
     !c.is_digit(10) && *c != '.'
 }
 
-pub fn part1(input: String) {
+fn part1(input: String) {
 //     let input = "467..114..
 // ...*......
 // ..35..633.
@@ -125,7 +125,7 @@ impl Number {
     }
 }
 
-pub fn part2(input: String) {
+fn part2(input: String) {
 //     let input = "467..114..
 // ..........
 // ..35..633.
@@ -236,4 +236,9 @@ pub fn part2(input: String) {
     }
 
     println!("{ans}");
+}
+
+pub fn run(input: String) {
+    part1(input.clone());
+    part2(input);
 }
