@@ -68,7 +68,32 @@ fn part2(input: String) {
     println!("{ans}");
 }
 
+///
+/// Can use the quadratic formula to solve this problem. 
+/// Let t be the time you have, r the record for the race
+/// and h the hold time for the button.
+/// 
+/// Need to solve for h: 
+///         (t - h) h > r
+///          th - h^2 > r
+///     -h^2 + th - r > 0
+/// quadratic formula:
+///     h = -t +- sqrt(t^2 - 4 * (-1) * (-r)) / 2 * (-1)
+///       = -t +- sqrt(t^2 - 4r) / -2
+///       = t -+ sqrt(t^2 - 4r) / 2 
+///
+fn solve(time: f32, record: f32) -> u32 {
+    let root = f32::sqrt(time * time - 4. * record);
+    let lower = ((time - root) / 2.).ceil() as u32;
+    let upper = ((time + root) / 2.).ceil() as u32;
+
+    (lower..upper).len() as u32
+}
+
 pub fn run(input: String) {
+    let solution = solve(7., 9.);
+    dbg!(solution);
+
     part1(input.clone());
     part2(input.clone());
 }
