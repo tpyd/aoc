@@ -62,7 +62,6 @@ fn part2(input: String) {
         }
     }
 
-    // Off by one error somewhere i think
     let ans = last_win - first_win + 1;
 
     println!("{ans}");
@@ -84,16 +83,13 @@ fn part2(input: String) {
 ///
 fn solve(time: f32, record: f32) -> u32 {
     let root = f32::sqrt(time * time - 4. * record);
-    let lower = ((time - root) / 2.).ceil() as u32;
+    let lower = (((time - root) / 2.) + 1.).floor() as u32;
     let upper = ((time + root) / 2.).ceil() as u32;
 
     (lower..upper).len() as u32
 }
 
 pub fn run(input: String) {
-    let solution = solve(7., 9.);
-    dbg!(solution);
-
     part1(input.clone());
     part2(input.clone());
 }
