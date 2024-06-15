@@ -1,14 +1,16 @@
 from functools import cmp_to_key
 
-#data = """
-#32T3K 765
-#T55J5 684
-#KK677 28
-#KTJJT 220
-#QQQJA 483    
-#"""
+datatest = """
+32T3K 765
+T55J5 684
+KK677 28
+KTJJT 220
+QQQJA 483    
+"""
 with open("../../input/2023/real/day07.txt") as f:
-    data = f.read()
+    datareal = f.read()
+
+data = datareal
 
 data = data.split('\n')
 data = [d.strip() for d in data if len(d.strip()) > 0]
@@ -50,39 +52,18 @@ def comparecards(c1, c2):
     a, _ = c1.split(' ')
     b, _ = c2.split(' ')
 
-    group_a = {}
-    for card in a:
-        if card in group_a:
-            group_a[card] += 1
-        else:
-            group_a[card] = 1
-
-    group_b = {}
-    for card in b:
-        if card in group_b:
-            group_b[card] += 1
-        else:
-            group_b[card] = 1
-
-    for group_length in [5, 4, 3, 2, 1]:
-        lgroup_a = {k: v for (k, v) in group_a.items() if v == group_length}
-        lgroup_b = {k: v for (k, v) in group_b.items() if v == group_length}
-
-        if len(lgroup_a) == 0 and len(lgroup_b) == 0:
+    for (l, r) in zip([c for c in a], [c for c in b]):
+        if l == r:
             continue
 
         for card in ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2']:
-            if card in lgroup_a and card in lgroup_b:
-                continue;
-            if card in lgroup_a and card not in lgroup_b:
-                print(f"{lgroup_a} er større enn {lgroup_b}")
+            if l == card:
                 return 1
-            elif card not in lgroup_a and card in lgroup_b:
-                print(f"{lgroup_a} er mindre enn {lgroup_b}")
+            elif r == card:
                 return -1
 
-    print("Warning, equal decks")
-    return 0; 
+    print("Decks are equal")
+    return 0
 
 five_of_a_kind = sorted(five_of_a_kind, key=cmp_to_key(comparecards), reverse=True)
 four_of_a_kind = sorted(four_of_a_kind, key=cmp_to_key(comparecards), reverse=True)
