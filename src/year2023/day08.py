@@ -108,7 +108,6 @@ def part2():
         current_instruction = 0
         location = current_location
         steps = 0
-        first_hit = False
 
         while True:
             direction = instructions[current_instruction]
@@ -126,14 +125,9 @@ def part2():
             steps += 1
 
             if location[2] == "Z":
-                if not first_hit:
-                    steps_to_first = steps
-                    first_hit = True
-                elif first_hit:
-                    steps_to_second = steps
-                    break
+                break
 
-        loops.append(steps_to_first)
+        loops.append(steps)
     
     ans = math.lcm(*loops)
 
