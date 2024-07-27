@@ -12,9 +12,12 @@ min_location = float('inf')
 for seed in seeds:
     for group in segments[1:]:
         for smap in re.findall(r'(\d+) (\d+) (\d+)', group):
-            dest, src, rng = map(int, smap)
-            if seed >= src and seed < src + rng:
-                seed = seed - src + dest
+            z, y1, dy = map(int, smap)
+            y2 = y1 + dy
+            diff = z - y1
+
+            if y1 <= seed < y2:
+                seed += diff
                 break
 
     min_location = min(min_location, seed)
