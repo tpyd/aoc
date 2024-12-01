@@ -2,9 +2,13 @@ use core::panic;
 use std::env;
 use std::fs;
 
+mod year2024 {
+    pub mod day01;
+}
+
 use aoc::get_day;
 
-fn read_input(day: u32) -> String {
+fn read_input(day: u32, year: u32) -> String {
     let cwd = env::current_dir().unwrap();
     let filename = cwd
         .join("input")
@@ -35,6 +39,15 @@ fn read_test_input(day: u32, part: Option<String>) -> String {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
+
+    let day_str = &args[1];
+    
+    match day_str {
+        "1" => => year2024::day01::run()
+        _ => eprintln!("Could not run day {}", day_str)
+    }
+
+    return;
 
     let command = args[1].clone();
     let day_str = args[2].clone();
