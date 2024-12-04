@@ -12,54 +12,26 @@ occurences = 0
 
 for y in range(y_max):
     for x in range(x_max):
-        # Horizontal right
+        # Horizontal
         if x + 3 < x_max:
             text = data[y][x] + data[y][x+1] + data[y][x+2] + data[y][x+3]
-            if text == word:
-                occurences += 1
+            occurences += text == word or text[::-1] == word
 
-        # Horizontal left
-        if x - 3 >= 0:
-            text = data[y][x] + data[y][x-1] + data[y][x-2] + data[y][x-3]
-            if text == word:
-                occurences += 1
-
-        # Vertical down
+        # Vertical
         if y + 3 < y_max:
             text = data[y][x] + data[y+1][x] + data[y+2][x] + data[y+3][x]
-            if text == word:
-                occurences += 1
+            occurences += text == word or text[::-1] == word
             
-        # Vertical up
-        if y - 3 >= 0:
-            text = data[y][x] + data[y-1][x] + data[y-2][x] + data[y-3][x]
-            if text == word:
-                occurences += 1
-
         # Diagonal down-right
         if y + 3 < y_max and x + 3 < x_max:
             text = data[y][x] + data[y+1][x+1] + data[y+2][x+2] + data[y+3][x+3]
-            if text == word:
-                occurences += 1
-
-        # Diagonal up-left
-        if y - 3 >= 0 and x - 3 >= 0:
-            text = data[y][x] + data[y-1][x-1] + data[y-2][x-2] + data[y-3][x-3]
-            if text == word:
-                occurences += 1
+            occurences += text == word or text[::-1] == word
 
         # Diagonal down-left
         if y + 3 < y_max and x - 3 >= 0:
             text = data[y][x] + data[y+1][x-1] + data[y+2][x-2] + data[y+3][x-3]
-            if text == word:
-                occurences += 1
+            occurences += text == word or text[::-1] == word
 
-        # Diagonal up-right
-        if y - 3 >= 0 and x + 3 < x_max:
-            text = data[y][x] + data[y-1][x+1] + data[y-2][x+2] + data[y-3][x+3]
-            if text == word:
-                occurences += 1
-        
 print(occurences)
 
 occurences = 0
