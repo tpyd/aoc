@@ -1,4 +1,4 @@
-with open("input/2024/day01.txt", "r") as f:
+with open("input/2024/day01.txt") as f:
     data = f.read()
 
 left_list = []

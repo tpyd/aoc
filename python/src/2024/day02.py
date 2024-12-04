@@ -1,4 +1,4 @@
-with open("input/2024/day02.txt", "r") as f:
+with open("input/2024/day02.txt") as f:
     data = f.read()
 
 num_safe = 0

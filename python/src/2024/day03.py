@@ -1,6 +1,6 @@
 import re
 
-with open("input/2024/day03.txt", "r") as f:
+with open("input/2024/day03.txt") as f:
     data = f.read()
 
 sum = 0

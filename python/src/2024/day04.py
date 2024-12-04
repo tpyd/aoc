@@ -1,4 +1,5 @@
-data = open("input/2024/day04.txt").read()
+with open("input/2024/day04.txt") as f:
+    data = f.read()
 
 data = data.strip().split('\n')
 data = [list(d) for d in data]
@@ -62,26 +63,20 @@ for y in range(y_max):
 print(occurences)
 
 occurences = 0
+valid_patterns = [
+    ('M', 'M', 'S', 'S'),
+    ('M', 'S', 'M', 'S'),
+    ('S', 'M', 'S', 'M'),
+    ('S', 'S', 'M', 'M'),
+]
 
 for y in range(1, y_max - 1):
     for x in range(1, x_max - 1):
         if data[y][x] != 'A':
             continue
 
-        # M at the top
-        if data[y-1][x-1] == 'M' and data[y-1][x+1] == 'M' and data[y+1][x-1] == 'S' and data[y+1][x+1] == 'S':
-            occurences += 1
-
-        # M on the left
-        if data[y-1][x-1] == 'M' and data[y+1][x-1] == 'M' and data[y-1][x+1] == 'S' and data[y+1][x+1] == 'S':
-            occurences += 1
-
-        # M on the right
-        if data[y-1][x+1] == 'M' and data[y+1][x+1] == 'M' and data[y-1][x-1] == 'S' and data[y+1][x-1] == 'S':
-            occurences += 1
-
-        # M on the bottom
-        if data[y+1][x-1] == 'M' and data[y+1][x+1] == 'M' and data[y-1][x-1] == 'S' and data[y-1][x+1] == 'S':
+        letters = (data[y-1][x-1], data[y-1][x+1], data[y+1][x-1], data[y+1][x+1])
+        if letters in valid_patterns:
             occurences += 1
 
 print(occurences)
