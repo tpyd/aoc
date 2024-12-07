@@ -1,17 +1,5 @@
 import copy
 
-data = """....#.....
-.........#
-..........
-..#.......
-.......#..
-..........
-.#..^.....
-........#.
-#.........
-......#...
-"""
-
 with open("input/2024/day06.txt") as f:
     data = f.read()
 
@@ -44,16 +32,12 @@ def next(guard, direction):
         return (guard[0], guard[1] - 1)
 
 while True:
-    #print("Time to look at the next position")
     next_position = next(guard, direction)
-    #print(f"Its {next_position}")
 
     if next_position[0] < 0 or next_position[0] > x_max or next_position[1] < 0 or next_position[1] > y_max:
-        #print("Done")
         break
     
     if data[next_position[1]][next_position[0]] == "#":
-        #print(f"{next_position} is blocked, time to change direction")
         if direction == "up":
             direction = "right"
         elif direction == "right":
@@ -66,10 +50,7 @@ while True:
         next_position = next(guard, direction)
 
     if next_position[0] < 0 or next_position[0] > x_max or next_position[1] < 0 or next_position[1] > y_max:
-        #print("Done")
         break
-
-    #print(f"Ill take a step to {next_position}")
 
     guard = next_position
     visited.add(guard)
@@ -89,16 +70,12 @@ for pos in visited:
     visited.add((guard, direction))
 
     while True:
-        #print("Time to look at the next position")
         next_position = next(guard, direction)
-        #print(f"Its {next_position}")
 
         if next_position[0] < 0 or next_position[0] > x_max or next_position[1] < 0 or next_position[1] > y_max:
-            #print("Walked out of bounds")
             break
         
         while data_copy[next_position[1]][next_position[0]] == "#":
-            #print(f"{next_position} is blocked, time to change direction")
             if direction == "up":
                 direction = "right"
             elif direction == "right":
@@ -111,14 +88,10 @@ for pos in visited:
             next_position = next(guard, direction)
 
         if next_position[0] < 0 or next_position[0] > x_max or next_position[1] < 0 or next_position[1] > y_max:
-            #print("Walked out of bounds")
             break
-
-        #print(f"Ill take a step to {next_position}")
 
         guard = next_position
         if (guard, direction) in visited:
-            #print("loop detected")
             num_loops += 1
             break
         visited.add((guard, direction))
