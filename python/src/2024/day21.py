@@ -1,12 +1,5 @@
 import functools
 
-data = """029A
-980A
-179A
-456A
-379A
-"""
-
 with open("input/2024/day21.txt") as f:
     data = f.read()
 
@@ -35,6 +28,7 @@ dpad = {
     ">": (2, 1),       
     " ": (0, 0)
 }
+
 
 def map_buttons(buttons, pad):
     moves = ""
@@ -84,43 +78,6 @@ def map_buttons(buttons, pad):
 
     return moves
 
-total = 0
-
-for sequence in sequences:
-    buttons = list(sequence)
-    step1 = map_buttons(buttons, keypad)
-    step2 = map_buttons(step1, dpad)
-    step3 = map_buttons(step2, dpad)
-    """
-    print(sequence)
-    print(step1)
-    print(step2)
-    print(step3)
-    print(len(step3))
-    break
-    """
-
-    #print(len(step3))
-    total += len(step3) * int(sequence.replace("A", ""))
-
-print(total)
-
-# part 2
-"""
-total = 0
-for i, sequence in enumerate(sequences):
-    print(f"Solving sequence number {i} which is {sequence}")
-    buttons = list(sequence)
-    next_step = map_buttons(buttons, keypad)
-    
-    for k in range(25):
-        print(f"Currently at keypad number {k+1} / 25 for sequence number {i}")
-        next_step = map_buttons(next_step, dpad)
-
-    total += len(next_step) * int(sequence.replace("A", ""))
-
-print(total)
-"""
 
 @functools.cache
 def map_dpad(start, end, depth):
@@ -134,7 +91,7 @@ def map_dpad(start, end, depth):
     nx, ny = next_position
     dx, dy = nx - cx, ny - cy
     ex, ey = dpad[" "]
-    
+
     ups, downs, lefts, rights = "", "", "", ""
 
     if dy < 0:
@@ -160,37 +117,46 @@ def map_dpad(start, end, depth):
     total_length = 0
     current = start
 
-    #print(f"Mapped {end} to {moves}")
     current = "A"
 
     for move in moves:
         length = map_dpad(current, move, depth - 1)
-        #print(f"Moving {move} was done in {length} moves")
         total_length += length
         current = move
 
-    #print(f"Moving {start} to {end} is {moves}. Has length {total_length} at depth {depth}")
-
     return total_length
 
+part1 = 0
 
-total = 0
 for sequence in sequences:
     next_step = map_buttons(sequence, keypad)
-    total_length = 0
 
-    #print(f"Step 1 gave {total_length} steps")
-    
+    total_length = 0
     current = "A"
-    #print(next_step)
+
     for step in next_step:
-        length = map_dpad(current, step, 25)
-        #print(f"Mapping '{step}' gave a length of {length} steps")
+        length = map_dpad(current, step, 2)
         total_length += length
         current = step
 
-    #print(f"Sequence: {sequence} | length: {total_length} | Expected 28")
-    total += total_length * int(sequence.replace("A", ""))
+    part1 += total_length * int(sequence.replace("A", ""))
 
-print(total)
+print(part1)
+
+part2 = 0
+
+for sequence in sequences:
+    next_step = map_buttons(sequence, keypad)
+
+    total_length = 0
+    current = "A"
+
+    for step in next_step:
+        length = map_dpad(current, step, 25)
+        total_length += length
+        current = step
+
+    part2 += total_length * int(sequence.replace("A", ""))
+
+print(part2)
 
