@@ -1,13 +1,9 @@
 [package]
 name = "aoc"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["tpyd <112725276+tpyd@users.noreply.github.com>"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-itertools = "0.10.5"
-regex = "1.7.0"
-petgraph = "0.6.2"
-nom = "7.1.3"
