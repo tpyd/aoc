@@ -1,8 +1,10 @@
 pub mod day01;
+pub mod day02;
 
 pub fn run_day(day: usize, input: &str) {
     match day {
         1 => print_results(day01::run(input)),
+        2 => print_results(day02::run(input)),
         _ => println!("Could not find day {}", day),
     }
 }
