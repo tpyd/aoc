@@ -22,6 +22,7 @@ pub fn run(input: &str) -> (i32, usize) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::utils;
 
     #[test]
     fn test_part1() {
@@ -60,6 +61,15 @@ mod tests {
 
         let (_, basement) = run("()())"); 
         assert_eq!(basement, 5);
+    }
+
+    #[test]
+    fn test_real() {
+        let input = utils::get_input(2015, 1);
+        let (floor, basement) = run(&input);
+
+        assert_eq!(floor, 138);
+        assert_eq!(basement, 1771);
     }
 }
 
