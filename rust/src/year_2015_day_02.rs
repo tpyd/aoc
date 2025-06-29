@@ -57,7 +57,7 @@ mod tests {
 
     #[test]
     fn test_real() {
-        let input = utils::get_input(2015, 2);
+        let input = utils::read_input(2015, 2);
         let (wrapping_paper, ribbon) = run(&input);
 
         assert_eq!(wrapping_paper, 1586300);

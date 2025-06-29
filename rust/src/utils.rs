@@ -1,6 +1,6 @@
 use std::fs;
 
-pub fn get_input(year: usize, day: usize) -> String {
+pub fn read_input(year: usize, day: usize) -> String {
     let input_path = format!("input/year{}/day{:02}.txt", year, day);
     let input = fs::read_to_string(&input_path).expect("Could not find input file");
 

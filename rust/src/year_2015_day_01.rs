@@ -65,7 +65,7 @@ mod tests {
 
     #[test]
     fn test_real() {
-        let input = utils::get_input(2015, 1);
+        let input = utils::read_input(2015, 1);
         let (floor, basement) = run(&input);
 
         assert_eq!(floor, 138);

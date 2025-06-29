@@ -1,5 +1,11 @@
 mod utils;
-mod years;
+mod year_2015_day_01;
+mod year_2015_day_02;
+
+fn print_solution<T: std::fmt::Display, U: std::fmt::Display>(solution: (T, U)) {
+    let (part1, part2) = solution;
+    println!("{}\n{}", part1, part2);
+}
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -12,11 +18,12 @@ fn main() {
     let year = args[1].parse::<usize>().expect("Year must be a number");
     let day = args[2].parse::<usize>().expect("Day must be a number");
 
-    let input = utils::get_input(year, day);
+    let input = utils::read_input(year, day);
 
-    match year {
-        2015 => years::year2015::run_day(day, &input),
-        _ => println!("Could not find year")
+    match (year, day) {
+        (2015, 1) => print_solution(year_2015_day_01::run(&input)),
+        (2015, 2) => print_solution(year_2015_day_02::run(&input)),
+        (_, _) => println!("Could not find year/day combination")
     }
 }
 

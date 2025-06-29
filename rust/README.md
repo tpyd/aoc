@@ -1,7 +1,11 @@
 # Advent of Code in Rust
 
+## Solve
+`cargo run <year> <day>`
 
-## Resources
-- [itertools](https://crates.io/crates/itertools): Extends iterators with extra methods and adaptors.
-- [hashbrown](https://crates.io/crates/hashbrown): Faster hashing functions for HashMap and HashSet.
-- [regex](https://crates.io/crates/regex): Official regular expressions implementation for Rust.
+## Run tests
+`cargo test -- year_<year>_day_<day>`
+
+## Benchmark
+`cargo bench --bench year_<year>_day_<day>`
+

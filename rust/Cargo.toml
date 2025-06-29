@@ -7,15 +7,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dev-dependencies]
-criterion = "0.5.1"
-
-[lib]
-path = "src/lib.rs"
-
-[[bin]]
-name = "aoc"
-path = "src/main.rs"
+criterion = "0.6.0"
 
 [[bench]]
-name = "my_benchmark"
+name = "year_2015_day_01"
+harness = false
+
+[[bench]]
+name = "year_2015_day_02"
 harness = false
