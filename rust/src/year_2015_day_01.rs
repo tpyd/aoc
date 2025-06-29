@@ -26,50 +26,50 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        let (floor, _) = run("(())"); 
-        assert_eq!(floor, 0);
+        let (part1, _) = run("(())"); 
+        assert_eq!(part1, 0);
 
-        let (floor, _) = run("()()"); 
-        assert_eq!(floor, 0);
+        let (part1, _) = run("()()"); 
+        assert_eq!(part1, 0);
 
-        let (floor, _) = run("((("); 
-        assert_eq!(floor, 3);
+        let (part1, _) = run("((("); 
+        assert_eq!(part1, 3);
 
-        let (floor, _) = run("(()(()("); 
-        assert_eq!(floor, 3);
+        let (part1, _) = run("(()(()("); 
+        assert_eq!(part1, 3);
 
-        let (floor, _) = run("))((((("); 
-        assert_eq!(floor, 3);
+        let (part1, _) = run("))((((("); 
+        assert_eq!(part1, 3);
 
-        let (floor, _) = run("())"); 
-        assert_eq!(floor, -1);
+        let (part1, _) = run("())"); 
+        assert_eq!(part1, -1);
 
-        let (floor, _) = run("))("); 
-        assert_eq!(floor, -1);
+        let (part1, _) = run("))("); 
+        assert_eq!(part1, -1);
 
-        let (floor, _) = run(")))"); 
-        assert_eq!(floor, -3);
+        let (part1, _) = run(")))"); 
+        assert_eq!(part1, -3);
 
-        let (floor, _) = run(")())())"); 
-        assert_eq!(floor, -3);
+        let (part1, _) = run(")())())"); 
+        assert_eq!(part1, -3);
     }    
 
     #[test]
     fn test_part2() {
-        let (_, basement) = run(")"); 
-        assert_eq!(basement, 1);
+        let (_, part2) = run(")"); 
+        assert_eq!(part2, 1);
 
-        let (_, basement) = run("()())"); 
-        assert_eq!(basement, 5);
+        let (_, part2) = run("()())"); 
+        assert_eq!(part2, 5);
     }
 
     #[test]
     fn test_real() {
         let input = utils::read_input(2015, 1);
-        let (floor, basement) = run(&input);
+        let (part1, part2) = run(&input);
 
-        assert_eq!(floor, 138);
-        assert_eq!(basement, 1771);
+        assert_eq!(part1, 138);
+        assert_eq!(part2, 1771);
     }
 }
 

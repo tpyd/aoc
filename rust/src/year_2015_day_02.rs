@@ -39,28 +39,28 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        let (wrapping_paper, _) = run("2x3x4"); 
-        assert_eq!(wrapping_paper, 58);
+        let (part1, _) = run("2x3x4"); 
+        assert_eq!(part1, 58);
 
-        let (wrapping_paper, _) = run("1x1x10"); 
-        assert_eq!(wrapping_paper, 43);
+        let (part1, _) = run("1x1x10"); 
+        assert_eq!(part1, 43);
     }    
 
     #[test]
     fn test_part2() {
-        let (_, ribbon) = run("2x3x4");
-        assert_eq!(ribbon, 34);
+        let (_, part2) = run("2x3x4");
+        assert_eq!(part2, 34);
 
-        let (_, ribbon) = run("1x1x10");
-        assert_eq!(ribbon, 14);
+        let (_, part2) = run("1x1x10");
+        assert_eq!(part2, 14);
     }
 
     #[test]
     fn test_real() {
         let input = utils::read_input(2015, 2);
-        let (wrapping_paper, ribbon) = run(&input);
+        let (part1, part2) = run(&input);
 
-        assert_eq!(wrapping_paper, 1586300);
-        assert_eq!(ribbon, 3737498);
+        assert_eq!(part1, 1586300);
+        assert_eq!(part2, 3737498);
     }
 }
