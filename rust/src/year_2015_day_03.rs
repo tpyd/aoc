@@ -1,16 +1,10 @@
 use std::collections::HashSet;
 
-#[derive(Debug, PartialEq, Eq)]
-enum Turn {
-    Santa,
-    Robo
-}
-
 pub fn run(input: &str) -> (usize, usize) {
     let (mut part1_x, mut part1_y) = (0, 0);
     let (mut santa_x, mut santa_y) = (0, 0);
     let (mut robo_x, mut robo_y) = (0, 0);
-    let mut turn = Turn::Santa;
+    let mut santas_turn = true;
 
     let mut part1_visited = HashSet::new();
     let mut part2_visited = HashSet::new();
@@ -32,14 +26,14 @@ pub fn run(input: &str) -> (usize, usize) {
         (part1_x, part1_y) = (part1_x + dx, part1_y + dy);
         part1_visited.insert((part1_x, part1_y));
 
-        if turn == Turn::Santa {
+        if santas_turn {
             (santa_x, santa_y) = (santa_x + dx, santa_y + dy);
             part2_visited.insert((santa_x, santa_y));
-            turn = Turn::Robo;
+            santas_turn = false;
         } else {
             (robo_x, robo_y) = (robo_x + dx, robo_y + dy);
             part2_visited.insert((robo_x, robo_y));
-            turn = Turn::Santa;
+            santas_turn = true;
         }
     }
     
