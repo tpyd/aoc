@@ -1,18 +1,29 @@
-pub fn run(input: &str) -> (i32, i32) {
+pub fn run(input: &str) -> (u32, u32) {
+    let trimmed_input = input.trim();
     let mut num = 0;
+    let mut part1 = 0;
+    let mut part2 = 0;
 
     loop {
-        let hash_input = format!("{}{}", input.trim(), num);
+        let hash_input = format!("{}{}", trimmed_input, num);
         let hash = md5(hash_input);
 
-        if hash.starts_with("00000") {
+        if hash.starts_with("00000") && part1 == 0 {
+            part1 = num;
+        }
+
+        if hash.starts_with("000000") && part2 == 0 {
+            part2 = num;
+        }
+
+        if part1 != 0 && part2 != 0 {
             break;
         }
 
         num += 1;
     }
 
-    (num, 0)
+    (part1, part2)
 }
 
 fn md5(input: String) -> String {
@@ -129,7 +140,7 @@ mod tests {
         let (part1, part2) = run(&input);
 
         assert_eq!(part1, 282749);
-        // assert_eq!(part2, 0);
+        assert_eq!(part2, 9962624);
     }
 }
 
