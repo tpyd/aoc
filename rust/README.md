@@ -17,3 +17,7 @@
 ## Benchmark
 `cargo bench --bench year_<year>_day_<day>`
 
+## Profiling
+`cargo install samply`
+`cargo build && samply record ./target/debug/aoc <year> <day>`
+
