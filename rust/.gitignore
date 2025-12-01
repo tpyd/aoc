@@ -12,3 +12,6 @@ Cargo.lock
 
 # Samply profiling data
 profile.json.gz
+
+# Advent of code input files
+input/
