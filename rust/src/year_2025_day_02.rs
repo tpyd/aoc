@@ -12,41 +12,33 @@ pub fn run(input: &str) -> (u64, u64) {
             
     for range in ranges {
         for n in range {
-            // dbg!();
-            // dbg!(n);
             let id = n.to_string();
-            
-            // if id.len() % 2 != 0 {
-            //     continue;
-            // }
-            
-            // Part 1
-            let half = id.split_at(id.len() / 2).0;
+            let digits = id.len();
 
-            if id == half.to_owned() + half {
+            // Part 1
+            let half = id.split_at(digits / 2).0;
+
+            if id == half.repeat(2) {
                 sum_part1 += n; 
             }
 
             // Part 2
-            for i in 1..id.len() {
-                // if id.len() & i != 0 {
-                //     continue;
-                // }
+            for i in 1..(digits / 2) + 1 {
+                if digits % i != 0 {
+                    continue;
+                }
 
                 let pattern = &id[..i];
-                let repeated = pattern.repeat(id.len() / i); 
-                // dbg!();
-                // dbg!(&pattern, &repeated, &id);
+                let repeated = pattern.repeat(digits / i); 
 
                 if repeated == id {
                     sum_part2 += n;
-                    // dbg!("added");
                     break;
                 }
             }
         }
     }
-        
+
     return (sum_part1, sum_part2);
 }
 
