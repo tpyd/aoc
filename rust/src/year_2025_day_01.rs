@@ -42,13 +42,12 @@ pub fn run(input: &str) -> (i32, i32) {
                     zeros_part2 += 1;
                 }
 
-                // dial = (dial + n) % 100
                 dial = (dial + n) % 100;
             },
             _ => {}
         }
 
-        if dial < 0 {
+        if dial < 0 || dial >= 100 {
             panic!();
         }
 
@@ -85,7 +84,7 @@ mod tests {
         let (part1, _) = run("L151");
         assert_eq!(part1, 0);
 
-        let (part1, _) = run("L50\nL1\nR1\nR1");
+        let (part1, _) = run("L1000");
         assert_eq!(part1, 0);
     }    
 
