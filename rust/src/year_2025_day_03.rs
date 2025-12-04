@@ -1,53 +1,28 @@
 pub fn run(input: &str) -> (u64, u64) {
-    let banks = input
+    input
         .trim_end()
         .split('\n')
-        .map(|x| x.as_bytes());
+        .map(|x| x.as_bytes())
+        .fold((0, 0), |acc, b| (acc.0 + calculate_jolts(b, 2), acc.1 + calculate_jolts(b, 12)))
+}
 
-    let mut b1;
-    let mut b2;
-    let mut output_joltage = 0;
-    let mut output_joltage_part2 = 0;
+fn calculate_jolts(bank: &[u8], num_batteries: usize) -> u64 {
+    let mut bank_joltage = 0;
 
-    for bank in banks {
-        b1 = bank[0];
-        b2 = bank[1];
-
-        for battery in &bank[2..] {
-            if b2 > b1 {
-                b1 = b2;
-                b2 = *battery;
-                continue;
-            }
-
-            if *battery > b2 {
-                b2 = *battery;
+    let mut index = 0;
+    for i in 0..num_batteries {
+        let mut max = bank[index];
+        index += 1;
+        for j in index..bank.len() - (num_batteries - 1 - i) {
+            if bank[j] > max {
+                max = bank[j];
+                index = j + 1;
             }
         }
-
-        let jolts = ((b1 - 48).to_string() + &(b2 - 48).to_string()).parse::<u64>().unwrap();
-        output_joltage += jolts;
-
-        // Part 2
-        let mut bank_joltage = 0;
-
-        let mut index = 0;
-        for i in 0..12 {
-            let mut max = bank[index];
-            index += 1;
-            for j in index..bank.len()-(11-i) {
-                if bank[j] > max {
-                    max = bank[j];
-                    index = j + 1;
-                }
-            }
-            bank_joltage += (max - 48) as u64 * 10u64.pow(11 - i as u32);
-        }
-
-        output_joltage_part2 += bank_joltage;
+        bank_joltage += (max - 48) as u64 * 10u64.pow(num_batteries as u32 - 1 - i as u32);
     }
-
-    (output_joltage, output_joltage_part2)
+    
+    bank_joltage
 }
 
 #[cfg(test)]
