@@ -1,15 +1,37 @@
-pub fn run(input: &str) -> (i32, i32) {
-    let rolls = input
+pub fn run(input: &str) -> (usize, usize) {
+    let mut rolls = input
         .trim_end()
         .split('\n')
         .map(|x| x.chars().collect::<Vec<char>>())
         .collect::<Vec<Vec<char>>>();
 
+    let movable = get_movable(&rolls);
+    let part1 = movable.len();
+
+    let mut total_removed = 0;
+    loop {
+        let moved = get_movable(&rolls);
+
+        if moved.len() == 0 {
+            break;
+        }
+
+        total_removed += moved.len();
+
+        for m in moved {
+            rolls[m.1][m.0] = '.';
+        }
+    }
+
+    (part1, total_removed)
+}
+
+fn get_movable(rolls: &Vec<Vec<char>>) -> Vec<(usize, usize)> {
     let width = rolls[0].len();
     let height = rolls.len();
 
-    let mut movable = 0;
-    
+    let mut movable = Vec::new();
+
     // Center
     for y in 1..height-1 {
         for x in 1..width-1 {
@@ -31,8 +53,7 @@ pub fn run(input: &str) -> (i32, i32) {
             counter += (*right == '@') as usize;
             
             if counter < 4 {
-                movable += 1; 
-                dbg!("Found CENTER movable roll", &x, &y);
+                movable.push((x, y));
             }
         }
     }
@@ -55,8 +76,7 @@ pub fn run(input: &str) -> (i32, i32) {
         counter += (*right == '@') as usize;
         
         if counter < 4 {
-            movable += 1; 
-            dbg!("Found TOP movable roll", &x, 0);
+            movable.push((x, 0));
         }
     }
 
@@ -78,8 +98,7 @@ pub fn run(input: &str) -> (i32, i32) {
         counter += (*right == '@') as usize;
         
         if counter < 4 {
-            movable += 1; 
-            dbg!("Found BOTTOM movable roll", &x, &height);
+            movable.push((x, height-1));
         }
     }
 
@@ -101,8 +120,7 @@ pub fn run(input: &str) -> (i32, i32) {
         counter += (*right == '@') as usize;
         
         if counter < 4 {
-            movable += 1; 
-            dbg!("Found LEFT movable roll", 0, &y);
+            movable.push((0, y));
         }
     }
 
@@ -124,8 +142,7 @@ pub fn run(input: &str) -> (i32, i32) {
         counter += (*left == '@') as usize;
         
         if counter < 4 {
-            movable += 1; 
-            dbg!("Found RIGHT movable roll", &width, &y);
+            movable.push((width-1, y));
         }
     }
 
@@ -140,8 +157,7 @@ pub fn run(input: &str) -> (i32, i32) {
         counter += (*right == '@') as usize;
 
         if counter < 4 {
-            movable += 1; 
-            dbg!("Found TOP LEFT movable roll", 0, 0);
+            movable.push((0, 0));
         }
     }
 
@@ -155,8 +171,7 @@ pub fn run(input: &str) -> (i32, i32) {
         counter += (*left == '@') as usize;
 
         if counter < 4 {
-            movable += 1; 
-            dbg!("Found TOP RIGHT movable roll", &width, 0);
+            movable.push((width-1, 0));
         }
     }
 
@@ -170,8 +185,7 @@ pub fn run(input: &str) -> (i32, i32) {
         counter += (*right == '@') as usize;
 
         if counter < 4 {
-            movable += 1;
-            dbg!("Found BOTTOM LEFT movable roll", 0, &height);
+            movable.push((0, height-1));
         }
     }
 
@@ -185,12 +199,11 @@ pub fn run(input: &str) -> (i32, i32) {
         counter += (*left == '@') as usize;
 
         if counter < 4 {
-            movable += 1; 
-            dbg!("Found BOTTOM RIGHT movable roll", &width, &height);
+            movable.push((width-1, height-1));
         }
     }
 
-    (movable, 0)
+    movable
 }
 
 #[cfg(test)]
@@ -213,19 +226,28 @@ mod tests {
         assert_eq!(part1, 13);
     }    
 
-    // #[test]
-    // fn test_part2() {
-    //     let (_, part2) = run("example"); 
-    //     assert_eq!(part2, );
-    // }
-    //
-    // #[test]
-    // fn test_real() {
-    //     let input = utils::read_input(, );
-    //     let (part1, part2) = run(&input);
-    //
-    //     assert_eq!(part1, );
-    //     assert_eq!(part2, );
-    // }
+    #[test]
+    fn test_part2() {
+        let (_, part2) = run("..@@.@@@@.
+@@@.@.@.@@
+@@@@@.@.@@
+@.@@@@..@.
+@@.@@@@.@@
+.@@@@@@@.@
+.@.@.@.@@@
+@.@@@.@@@@
+.@@@@@@@@.
+@.@.@@@.@."); 
+        assert_eq!(part2, 43);
+    }
+
+    #[test]
+    fn test_real() {
+        let input = utils::read_input(2025, 4);
+        let (part1, part2) = run(&input);
+
+        assert_eq!(part1, 1441);
+        assert_eq!(part2, 9050);
+    }
 }
 
