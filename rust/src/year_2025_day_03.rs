@@ -8,8 +8,8 @@ pub fn run(input: &str) -> (u64, u64) {
 
 fn calculate_jolts(bank: &[u8], num_batteries: usize) -> u64 {
     let mut bank_joltage = 0;
-
     let mut index = 0;
+
     for i in 0..num_batteries {
         let mut max = bank[index];
         index += 1;
