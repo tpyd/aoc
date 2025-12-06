@@ -1,6 +1,4 @@
-use std::ops::RangeInclusive;
-
-pub fn run(input: &str) -> (usize, usize) {
+pub fn run(input: &str) -> (usize, u64) {
     let (ranges_raw, ids_raw) = input
         .trim_end()
         .split_once("\n\n")
@@ -27,7 +25,7 @@ pub fn run(input: &str) -> (usize, usize) {
         .collect();
 
     // Merge ranges
-    let mut ranges: Vec<RangeInclusive<u64>> = Vec::new();
+    let mut ranges: Vec<(u64, u64)> = Vec::new();
 
     while range_values.len() >= 2 {
         let (start, mut end) = range_values.remove(0);
@@ -36,7 +34,6 @@ pub fn run(input: &str) -> (usize, usize) {
             match range_values.iter().position(|(s, _)| *s <= end + 1) {
                 Some(overlapping_range) => {
                     let overlapping_range = range_values.remove(overlapping_range);
-
                     let (_, e) = overlapping_range;
 
                     if e > end {
@@ -46,20 +43,18 @@ pub fn run(input: &str) -> (usize, usize) {
                 None => break
             }
         }
-            
-        ranges.push(start..=end);
+
+        ranges.push((start, end));
     }
 
-    // Find number of fresh food
     let num_fresh = ids
         .iter()
-        .filter(|id| ranges.iter().any(|range| range.contains(id)))
+        .filter(|id| ranges.iter().any(|(start, end)| start <= id && *id <= end))
         .count();
 
-    // TODO try using range_values
     let num_possible_fresh = ranges
         .iter()
-        .fold(0, |acc, range| acc + range.clone().count());
+        .fold(0, |acc, (start, end)| acc + end - start + 1);
 
     (num_fresh, num_possible_fresh)
 }
