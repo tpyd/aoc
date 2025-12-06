@@ -1,125 +1,73 @@
 use std::ops::RangeInclusive;
 
-pub fn run(input: &str) -> (u32, u64) {
-    let (ranges, ids) = input
+pub fn run(input: &str) -> (usize, usize) {
+    let (ranges_raw, ids_raw) = input
         .trim_end()
         .split_once("\n\n")
         .unwrap();
 
-    let mut rangedvals: Vec<(u64, u64)> = Vec::new();
-    for range in ranges.split('\n') {
-        let (start, end) = range.split_once('-').unwrap();
-        rangedvals.push((start.parse::<u64>().unwrap(), end.parse::<u64>().unwrap()));
-    }
+    let mut range_values: Vec<(u64, u64)> = ranges_raw
+        .split("\n")
+        .map(|row| row
+            .split_once("-")
+            .and_then(|(first, last)| {
+                let start = first.parse::<u64>().unwrap();
+                let end = last.parse::<u64>().unwrap();
+                Some((start, end))
+            })
+            .unwrap()
+        )
+        .collect();
 
-    rangedvals.sort_unstable_by(|a, b| a.0.cmp(&b.0));
+    range_values.sort_unstable_by(|a, b| a.0.cmp(&b.0));
 
-    let mut new_ranges: Vec<RangeInclusive<u64>> = Vec::new();
-    
-    loop {
-        if rangedvals.len() == 0 {
-            break;
-        }
+    let ids: Vec<u64> = ids_raw
+        .split("\n")
+        .map(|id| id.parse::<u64>().unwrap())
+        .collect();
 
-        let (start, mut end) = rangedvals.remove(0);
+    // Merge ranges
+    let mut ranges: Vec<RangeInclusive<u64>> = Vec::new();
 
-        // Find overlapping ranges
+    while range_values.len() >= 2 {
+        let (start, mut end) = range_values.remove(0);
+
         loop {
-            let overlapping = rangedvals
-                .iter()
-                .position(|(s, e)| *s <= end + 1);
+            match range_values.iter().position(|(s, _)| *s <= end + 1) {
+                Some(overlapping_range) => {
+                    let overlapping_range = range_values.remove(overlapping_range);
 
-            if overlapping.is_none() {
-                break;
-            }
+                    let (_, e) = overlapping_range;
 
-            let overlapping_range = rangedvals.remove(overlapping.unwrap());
-
-            let (_, e) = overlapping_range;
-            
-            if e > end {
-                end = e; 
+                    if e > end {
+                        end = e; 
+                    }
+                },
+                None => break
             }
         }
             
-        // let mut overlapping: Vec<usize> = rangedvals
-        //     .iter()
-        //     .enumerate()
-        //     .filter(|(_, (s, e))| *s <= end + 1)  // TODO change to filter_map
-        //     .map(|(idx, _)| idx)
-        //     .collect();
-        //
-        // dbg!(&start, &end, &overlapping);
-        //
-        // loop {
-        //     if overlapping.len() == 0 {
-        //         break;
-        //     }
-        //
-        //     let idx = overlapping.remove(0);
-        //     let overlapping_range = rangedvals.remove(idx);
-        //     let (_, e) = overlapping_range;
-        //
-        //     if e > end {
-        //         end = e; 
-        //
-        //         overlapping = rangedvals
-        //             .iter()
-        //             .enumerate()
-        //             .filter(|(_, (s, e))| *s <= end + 1)  // TODO change to filter_map
-        //             .map(|(idx, _)| idx)
-        //             .collect();
-        //         dbg!("new", &overlapping);
-        //     }
-        // }
-
-        new_ranges.push(start..=end);
+        ranges.push(start..=end);
     }
 
+    // Find number of fresh food
+    let num_fresh = ids
+        .iter()
+        .filter(|id| ranges.iter().any(|range| range.contains(id)))
+        .count();
 
-    let mut num_fresh = 0;
-    for id in ids.split('\n') {
-        let idnum = id.parse::<u64>().unwrap(); 
+    // TODO try using range_values
+    let num_possible_fresh = ranges
+        .iter()
+        .fold(0, |acc, range| acc + range.clone().count());
 
-        for range in &new_ranges {
-            if range.contains(&idnum) {
-                num_fresh += 1; 
-            }
-        }
-    }
-
-    dbg!(&new_ranges);
-
-    let mut possible_fresh = 0;
-    for range in new_ranges {
-        let count = range.count() as u64;
-        possible_fresh += count;
-        dbg!(&count);
-    }
-
-    (num_fresh, possible_fresh)
+    (num_fresh, num_possible_fresh)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::utils;
-
-//     #[test]
-//     fn test_custom() {
-//         let (_, part2) = run("3-5
-// 3-5
-// 10-20
-// 6-7
-//
-// 1
-// 5
-// 8
-// 11
-// 17
-// 32"); 
-//         assert_eq!(part2, 15);
-//     }
 
     #[test]
     fn test_part1() {
