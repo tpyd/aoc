@@ -1,81 +1,87 @@
 pub fn run(input: &str) -> (u64, u64) {
-    let lines_part1: Vec<Vec<&str>> = input
-        .trim_end()
-        .split('\n')
-        .map(|x| x.split_whitespace().collect::<Vec<&str>>())
-        .collect();
-
-    let width = lines_part1[0].len();
-    let height = lines_part1.len();
-
-    let mut sum = 0;
-    let mut values: Vec<u64> = Vec::with_capacity(height - 1);
-
-    for col in 0..width {
-        values.clear();
-
-        for line in 0..height - 1 {
-            let value = lines_part1[line][col].parse::<u64>().unwrap();   
-            values.push(value);
-        }
-
-        let operator = &lines_part1[height - 1][col];
-
-        sum += match *operator {
-            "+" => values.iter().sum::<u64>(),
-            _ => values.iter().product()
-        };
-    }
-
-    // Part 2
-    let lines_part2: Vec<Vec<char>> = input
+    let lines: Vec<Vec<char>> = input
         .trim_end_matches('\n')
         .split('\n')
         .map(|x| x.chars().collect::<Vec<char>>())
         .collect();
 
-    values.clear();
+    let width = lines[0].len();
+    let height = lines.len();
 
-    let part2_width = lines_part2[0].len();
+    let mut horizontal_strings: Vec<String> = Vec::with_capacity(height - 1);
+    for _ in 0..height - 1 {
+        horizontal_strings.push(String::with_capacity(height - 1)); 
+    }
+
+    let mut vertical_values: Vec<u64> = Vec::with_capacity(height - 1);
+
     let mut operator = ' ';
-    let mut sum_part2 = 0;
-    let mut value_string = String::with_capacity(height - 1);
+    let mut vertical_string = String::with_capacity(height - 1);
 
-    for col in 0..part2_width {
-        value_string.clear();
+    let mut sum_part1 = 0;
+    let mut sum_part2 = 0;
+
+    for col in 0..width {
+        vertical_string.clear();
 
         for line in 0..height - 1 {
-            let digit = lines_part2[line][col];
-            value_string.push(digit);
+            let digit = lines[line][col];
+
+            if digit != ' ' {
+                horizontal_strings[line].push(digit);
+                vertical_string.push(digit);
+            }
         }
 
         // Empty column, calculate answer
-        if value_string.trim().is_empty() {
-            sum_part2 += match operator {
-                '+' => values.iter().sum::<u64>(),
-                _ => values.iter().product()
+        if vertical_string.is_empty() {
+            let horizontal_values = horizontal_strings
+                .iter()
+                .map(|v| v.parse::<u64>().unwrap());
+
+            sum_part1 += match operator {
+                '+' => horizontal_values.sum::<u64>(),
+                _ => horizontal_values.product()
             };
 
-            values.clear();
+            sum_part2 += match operator {
+                '+' => vertical_values.iter().sum::<u64>(),
+                _ => vertical_values.iter().product()
+            };
+
+            for i in 0..height - 1 {
+                horizontal_strings[i].clear();
+            }
+            vertical_values.clear();
+
             continue;
         }
 
-        let value = value_string.trim().parse::<u64>().unwrap(); 
-        values.push(value);
+        let value = vertical_string.parse::<u64>().unwrap(); 
+        vertical_values.push(value);
 
         // Operator is always on the left
-        if values.len() == 1 {
-            operator = lines_part2[height - 1][col]; 
+        if vertical_values.len() == 1 {
+            operator = lines[height - 1][col]; 
         }
     }
 
     // Add last block
-    sum_part2 += match operator {
-        '+' => values.iter().sum::<u64>(),
-        _ => values.iter().product()
+    let line_values = horizontal_strings
+        .iter()
+        .map(|v| v.parse::<u64>().unwrap());
+
+    sum_part1 += match operator {
+        '+' => line_values.sum::<u64>(),
+        _ => line_values.product()
     };
 
-    (sum, sum_part2)
+    sum_part2 += match operator {
+        '+' => vertical_values.iter().sum::<u64>(),
+        _ => vertical_values.iter().product()
+    };
+
+    (sum_part1, sum_part2)
 }
 
 #[cfg(test)]
