@@ -1,4 +1,4 @@
-use std::collections::VecDeque;
+use std::collections::{HashSet, VecDeque};
 
 pub fn run(input: &str) -> (usize, usize) {
     let lines: Vec<&str> = input
@@ -11,7 +11,7 @@ pub fn run(input: &str) -> (usize, usize) {
     let mut beams: VecDeque<(usize, usize, usize)> = VecDeque::new();
     beams.push_back((lines[0].find('S').unwrap(), 0, 1));
 
-    let splitters: Vec<(usize, usize)> = lines[2..]
+    let splitters: HashSet<(usize, usize)> = lines[2..]
         .iter()
         .enumerate()
         .flat_map(|(y, line)| 
