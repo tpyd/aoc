@@ -1,23 +1,26 @@
 pub fn run(input: &str) -> (u64, u64) {
-    let lines: Vec<Vec<String>> = input
+    let lines: Vec<Vec<&str>> = input
         .trim_end()
         .split('\n')
-        .map(|x| x.split_whitespace().map(|y| y.to_owned()).collect::<Vec<String>>())
+        .map(|x| x.split_whitespace().collect::<Vec<&str>>())
         .collect();
 
     let mut sum = 0;
     let num_lines = lines.len();
+    let width = lines[0].len();
+    let mut values: Vec<u64> = Vec::with_capacity(num_lines);
 
-    for col in 0..lines[0].len() {
-        let mut values: Vec<u64> = Vec::new();
+    for col in 0..width {
+        values.clear();
 
-        let op = &lines[num_lines - 1][col];
         for line in 0..num_lines - 1 {
             let value = lines[line][col].parse::<u64>().unwrap();   
             values.push(value);
         }
 
-        sum += match op.as_str() {
+        let operator = &lines[num_lines - 1][col];
+
+        sum += match *operator {
             "+" => values.iter().sum::<u64>(),
             _ => values.iter().product()
         };
@@ -49,11 +52,9 @@ pub fn run(input: &str) -> (u64, u64) {
         .map(|x| x.split('\n').collect::<Vec<&str>>())
         .collect::<Vec<Vec<&str>>>();
 
-    dbg!(&problems);
     let mut sum_part2 = 0;
     let new_num_lines = problems[0].len();
     for problem in problems {
-        dbg!(&problem);
         let op = problem[problem.len()-1].bytes().last().unwrap() as char;
 
         let mut values: Vec<u64> = Vec::new();
