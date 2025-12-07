@@ -23,9 +23,8 @@ pub fn run(input: &str) -> (usize, usize) {
         )
         .collect();
          
-    // TODO try hashmap/hashset/vecdeque for better perforamnce
     let mut timelines = 0;
-    let mut unique_splits = Vec::new();
+    let mut unique_splits = HashSet::new();
 
     while let Some((x, y, n)) = beams.pop_front() {
         if y >= height {
@@ -35,7 +34,7 @@ pub fn run(input: &str) -> (usize, usize) {
 
         if splitters.contains(&(x, y)) {
             if !unique_splits.contains(&(x, y)) {
-                unique_splits.push((x, y));
+                unique_splits.insert((x, y));
             }
 
             if let Some(idx) = beams.iter().position(|(fx, fy, _)| *fx == x+1 && *fy == y + 2) {
