@@ -19,7 +19,7 @@ pub fn run(input: &str) -> (usize, usize) {
                 .chars()
                 .enumerate()
                 .filter(|(_, c)| *c == '^')
-                .map(move |(x, _)| (x, y+2))
+                .map(move |(x, _)| (x, y + 2))
         )
         .collect();
          
@@ -37,18 +37,18 @@ pub fn run(input: &str) -> (usize, usize) {
                 unique_splits.insert((x, y));
             }
 
-            if let Some(idx) = beams.iter().position(|(fx, fy, _)| *fx == x+1 && *fy == y + 2) {
+            if let Some(idx) = beams.iter().position(|(fx, fy, _)| *fx == x + 1 && *fy == y + 2) {
                 let (_, _, nn) = beams.remove(idx).unwrap();
-                beams.push_back((x+1, y + 2, n + nn));
+                beams.push_back((x + 1, y + 2, n + nn));
             } else {
-                beams.push_back((x+1, y + 2, n));
+                beams.push_back((x + 1, y + 2, n));
             }
 
-            if let Some(idx) = beams.iter().position(|(fx, fy, _)| *fx == x-1 && *fy == y + 2) {
+            if let Some(idx) = beams.iter().position(|(fx, fy, _)| *fx == x - 1 && *fy == y + 2) {
                 let (_, _, nn) = beams.remove(idx).unwrap();
-                beams.push_back((x-1, y + 2, n + nn));
+                beams.push_back((x - 1, y + 2, n + nn));
             } else {
-                beams.push_back((x-1, y + 2, n));
+                beams.push_back((x - 1, y + 2, n));
             }
         } else {
             beams.push_back((x, y + 2, n));
