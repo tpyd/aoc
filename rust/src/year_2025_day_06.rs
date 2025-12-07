@@ -1,24 +1,25 @@
 pub fn run(input: &str) -> (u64, u64) {
-    let lines: Vec<Vec<&str>> = input
+    let lines_part1: Vec<Vec<&str>> = input
         .trim_end()
         .split('\n')
         .map(|x| x.split_whitespace().collect::<Vec<&str>>())
         .collect();
 
+    let width = lines_part1[0].len();
+    let height = lines_part1.len();
+
     let mut sum = 0;
-    let num_lines = lines.len();
-    let width = lines[0].len();
-    let mut values: Vec<u64> = Vec::with_capacity(num_lines);
+    let mut values: Vec<u64> = Vec::with_capacity(height - 1);
 
     for col in 0..width {
         values.clear();
 
-        for line in 0..num_lines - 1 {
-            let value = lines[line][col].parse::<u64>().unwrap();   
+        for line in 0..height - 1 {
+            let value = lines_part1[line][col].parse::<u64>().unwrap();   
             values.push(value);
         }
 
-        let operator = &lines[num_lines - 1][col];
+        let operator = &lines_part1[height - 1][col];
 
         sum += match *operator {
             "+" => values.iter().sum::<u64>(),
@@ -27,51 +28,52 @@ pub fn run(input: &str) -> (u64, u64) {
     }
 
     // Part 2
-    let lines2: Vec<Vec<char>> = input
+    let lines_part2: Vec<Vec<char>> = input
         .trim_end_matches('\n')
         .split('\n')
         .map(|x| x.chars().collect::<Vec<char>>())
         .collect();
 
-    let mut newlines: Vec<String> = Vec::new();
+    values.clear();
 
-    // Transpose input
-    let width = lines2[0].len();
-    for col in (0..width).rev() {
-        let mut actual = String::with_capacity(width);
-        for row in 0..lines2.len() {
-            actual.push(lines2[row][col]);
-        }
-        newlines.push(actual); 
-    }
-
-    // Calculate sum
-    let groups = newlines.iter().map(|x| x.trim()).collect::<Vec<&str>>().join("\n");
-    let problems = groups
-        .split("\n\n")
-        .map(|x| x.split('\n').collect::<Vec<&str>>())
-        .collect::<Vec<Vec<&str>>>();
-
+    let part2_width = lines_part2[0].len();
+    let mut operator = ' ';
     let mut sum_part2 = 0;
-    let new_num_lines = problems[0].len();
-    for problem in problems {
-        let op = problem[problem.len()-1].bytes().last().unwrap() as char;
+    let mut value_string = String::with_capacity(height - 1);
 
-        let mut values: Vec<u64> = Vec::new();
-        for (idx, val) in problem.iter().enumerate() {
-            if val.chars().last().unwrap().is_digit(10) {
-                values.push(val.parse::<u64>().unwrap());
-            } else {
-                values.push(val[..val.len()-1].trim().parse::<u64>().unwrap());
-            }
+    for col in 0..part2_width {
+        value_string.clear();
+
+        for line in 0..height - 1 {
+            let digit = lines_part2[line][col];
+            value_string.push(digit);
         }
 
-        // dbg!("a", &values, &op);
-        sum_part2 += match op.to_string().as_str() {
-            "+" => values.iter().sum::<u64>(),
-            _ => values.iter().product()
-        };
+        // Empty column, calculate answer
+        if value_string.trim().is_empty() {
+            sum_part2 += match operator {
+                '+' => values.iter().sum::<u64>(),
+                _ => values.iter().product()
+            };
+
+            values.clear();
+            continue;
+        }
+
+        let value = value_string.trim().parse::<u64>().unwrap(); 
+        values.push(value);
+
+        // Operator is always on the left
+        if values.len() == 1 {
+            operator = lines_part2[height - 1][col]; 
+        }
     }
+
+    // Add last block
+    sum_part2 += match operator {
+        '+' => values.iter().sum::<u64>(),
+        _ => values.iter().product()
+    };
 
     (sum, sum_part2)
 }
