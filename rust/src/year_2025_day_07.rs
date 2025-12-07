@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 pub fn run(input: &str) -> (usize, usize) {
     let lines: Vec<&str> = input
         .trim_end()
@@ -6,7 +8,8 @@ pub fn run(input: &str) -> (usize, usize) {
 
     let height = lines.len();
 
-    let mut beams = vec![(lines[0].find('S').unwrap(), 0, 1)];
+    let mut beams: VecDeque<(usize, usize, usize)> = VecDeque::new();
+    beams.push_back((lines[0].find('S').unwrap(), 0, 1));
 
     let splitters: Vec<(usize, usize)> = lines[2..]
         .iter()
@@ -20,13 +23,11 @@ pub fn run(input: &str) -> (usize, usize) {
         )
         .collect();
          
-    // TODO try hashmap/hashset for better perforamnce
+    // TODO try hashmap/hashset/vecdeque for better perforamnce
     let mut timelines = 0;
     let mut unique_splits = Vec::new();
 
-    while !beams.is_empty() {
-        let (x, y, n) = beams.remove(0);
-
+    while let Some((x, y, n)) = beams.pop_front() {
         if y >= height {
             timelines += n;
             continue;
@@ -38,20 +39,20 @@ pub fn run(input: &str) -> (usize, usize) {
             }
 
             if let Some(idx) = beams.iter().position(|(fx, fy, _)| *fx == x+1 && *fy == y + 2) {
-                let (_, _, nn) = beams.remove(idx);
-                beams.push((x+1, y + 2, n + nn));
+                let (_, _, nn) = beams.remove(idx).unwrap();
+                beams.push_back((x+1, y + 2, n + nn));
             } else {
-                beams.push((x+1, y + 2, n));
+                beams.push_back((x+1, y + 2, n));
             }
 
             if let Some(idx) = beams.iter().position(|(fx, fy, _)| *fx == x-1 && *fy == y + 2) {
-                let (_, _, nn) = beams.remove(idx);
-                beams.push((x-1, y + 2, n + nn));
+                let (_, _, nn) = beams.remove(idx).unwrap();
+                beams.push_back((x-1, y + 2, n + nn));
             } else {
-                beams.push((x-1, y + 2, n));
+                beams.push_back((x-1, y + 2, n));
             }
         } else {
-            beams.push((x, y + 2, n));
+            beams.push_back((x, y + 2, n));
         }
     }
 
