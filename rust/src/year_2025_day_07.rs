@@ -1,4 +1,4 @@
-pub fn run(input: &str) -> (i32, usize) {
+pub fn run(input: &str) -> (usize, usize) {
     let lines: Vec<&str> = input
         .trim_end()
         .split("\n")
@@ -6,86 +6,56 @@ pub fn run(input: &str) -> (i32, usize) {
 
     let height = lines.len();
 
-    let mut beams = Vec::new(); 
-    let mut quantum_beams = Vec::new(); 
-    let mut splitters = Vec::new();
-    let mut visited = Vec::new();
+    let mut beams = vec![(lines[0].find('S').unwrap(), 0, 1)];
 
-    for (y, line) in lines.iter().enumerate() {
-        for (x, symbol) in line.chars().enumerate() {
-            match symbol {
-                '^' => splitters.push((x, y)),
-                'S' => {
-                    beams.push((x, y));
-                    quantum_beams.push((x, y, 1));
-                },
-                _ => {}
-            }
-        }
-    }
-
+    let splitters: Vec<(usize, usize)> = lines[2..]
+        .iter()
+        .enumerate()
+        .flat_map(|(y, line)| 
+            line
+                .chars()
+                .enumerate()
+                .filter(|(_, c)| *c == '^')
+                .map(move |(x, _)| (x, y+2))
+        )
+        .collect();
+         
     // TODO try hashmap/hashset for better perforamnce
-    // TODO every second row is empty, can skip iterations
-    let mut splits = 0;
-
-    while let Some((x, y)) = beams.pop() {
-        let ny = y + 1; 
-
-        if ny >= height {
-            continue;
-        }
-
-        if splitters.contains(&(x, ny)) {
-            splits += 1;
-            if !beams.contains(&(x+1, ny)) && !visited.contains(&(x, ny)) {
-                beams.push((x+1, ny));
-                visited.push((x+1, ny));
-            }
-            if !beams.contains(&(x-1, ny)) && !visited.contains(&(x, ny)) {
-                beams.push((x-1, ny));
-                visited.push((x-1, ny));
-            }
-        } else {
-            if !beams.contains(&(x, ny)) && !visited.contains(&(x, ny)) {
-                beams.push((x, ny));
-                visited.push((x, ny));
-            }
-        }
-
-    }
-
     let mut timelines = 0;
+    let mut unique_splits = Vec::new();
 
-    while !quantum_beams.is_empty() {
-        let (x, y, n) = quantum_beams.remove(0);
-        let ny = y + 1;
+    while !beams.is_empty() {
+        let (x, y, n) = beams.remove(0);
 
-        if ny >= height {
+        if y >= height {
             timelines += n;
             continue;
         }
 
-        if splitters.contains(&(x, ny)) {
-            if quantum_beams.iter().any(|(ax, ay, _)| *ax == x+1 && *ay == ny) {
-                let idx = quantum_beams.iter().position(|(fx, fy, _)| *fx == x+1 && *fy == ny).unwrap();
-                let (_, _, nn) = quantum_beams.remove(idx);
-                quantum_beams.push((x+1, ny, n + nn));
-            } else {
-                quantum_beams.push((x+1, ny, n));
+        if splitters.contains(&(x, y)) {
+            if !unique_splits.contains(&(x, y)) {
+                unique_splits.push((x, y));
             }
-            if quantum_beams.iter().any(|(ax, ay, _)| *ax == x-1 && *ay == ny) {
-                let idx = quantum_beams.iter().position(|(fx, fy, _)| *fx == x-1 && *fy == ny).unwrap();
-                let (_, _, nn) = quantum_beams.remove(idx);
-                quantum_beams.push((x-1, ny, n + nn));
+
+            if let Some(idx) = beams.iter().position(|(fx, fy, _)| *fx == x+1 && *fy == y + 2) {
+                let (_, _, nn) = beams.remove(idx);
+                beams.push((x+1, y + 2, n + nn));
             } else {
-                quantum_beams.push((x-1, ny, n));
+                beams.push((x+1, y + 2, n));
+            }
+
+            if let Some(idx) = beams.iter().position(|(fx, fy, _)| *fx == x-1 && *fy == y + 2) {
+                let (_, _, nn) = beams.remove(idx);
+                beams.push((x-1, y + 2, n + nn));
+            } else {
+                beams.push((x-1, y + 2, n));
             }
         } else {
-            quantum_beams.push((x, ny, n));
+            beams.push((x, y + 2, n));
         }
     }
 
-    (splits, timelines)
+    (unique_splits.len(), timelines)
 }
 
 #[cfg(test)]
