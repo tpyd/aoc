@@ -1,6 +1,6 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, hash::Hash};
 
-pub fn run(input: &str) -> (usize, usize) {
+pub fn run(input: &str) -> (usize, i64) {
     let num_connections = if input.len() < 1000 { 10 } else { 1000 };
 
     let box_locations: Vec<(i64, i64, i64)> = input
@@ -33,8 +33,17 @@ pub fn run(input: &str) -> (usize, usize) {
     distances.sort_unstable_by(|a, b| b.0.total_cmp(&a.0));
 
     let mut connections: Vec<HashSet<usize>> = Vec::new();
+    for i in 0..box_locations.len() {
+        let mut set = HashSet::new();
+        set.insert(i);
+        connections.push(set);
+    }
 
-    for _ in 0..num_connections {
+    let mut part1 = 0;
+    let mut part2 = 0;
+    let mut counter = 0;
+
+    loop {
         let (_, (idx1, idx2)) = distances.pop().unwrap();
 
         let matches: Vec<usize> = connections
@@ -51,12 +60,26 @@ pub fn run(input: &str) -> (usize, usize) {
                 let set2 = connections.remove(matches[0].min(matches[1]));
                 set1.extend(&set2);
                 connections.push(set1);
+
+                if connections.len() == 1 && counter > num_connections {
+                    let (x1, _, _) = box_locations[idx1];
+                    let (x2, _, _) = box_locations[idx2];
+                    dbg!(&x1, &x2);
+                    part2 = x1 * x2;
+                }
             },
             1 => {
                 let mut set = connections.remove(matches[0]);
                 set.insert(idx1);
                 set.insert(idx2);
                 connections.push(set);
+
+                if connections.len() == 1 && counter > num_connections {
+                    let (x1, _, _) = box_locations[idx1];
+                    let (x2, _, _) = box_locations[idx2];
+                    dbg!(&x1, &x2);
+                    part2 = x1 * x2;
+                }
             },
             _ => {
                 let mut set = HashSet::new();
@@ -65,16 +88,24 @@ pub fn run(input: &str) -> (usize, usize) {
                 connections.push(set);
             }
         }
+
+        counter += 1;
+
+        if counter == num_connections {
+            connections.sort_unstable_by(|a, b| b.len().cmp(&a.len()));
+
+            part1 = connections
+                .iter()
+                .take(3)
+            .fold(1, |acc, s| acc * s.len());
+        }
+
+        if connections.len() == 1 && counter > num_connections {
+            break; 
+        }
     }
 
-    connections.sort_unstable_by(|a, b| b.len().cmp(&a.len()));
-
-    let networks = connections
-        .iter()
-        .take(3)
-        .fold(1, |acc, s| acc * s.len());
-        
-    (networks, 0)
+    (part1, part2)
 }
 
 #[cfg(test)]
@@ -82,9 +113,34 @@ mod tests {
     use super::*;
     use crate::utils;
 
+//     #[test]
+//     fn test_part1() {
+//         let (part1, _) = run("162,817,812
+// 57,618,57
+// 906,360,560
+// 592,479,940
+// 352,342,300
+// 466,668,158
+// 542,29,236
+// 431,825,988
+// 739,650,466
+// 52,470,668
+// 216,146,977
+// 819,987,18
+// 117,168,530
+// 805,96,715
+// 346,949,466
+// 970,615,88
+// 941,993,340
+// 862,61,35
+// 984,92,344
+// 425,690,689"); 
+//         assert_eq!(part1, 40);
+//     }    
+
     #[test]
-    fn test_part1() {
-        let (part1, _) = run("162,817,812
+    fn test_part2() {
+        let (_, part2) = run("162,817,812
 57,618,57
 906,360,560
 592,479,940
@@ -104,15 +160,9 @@ mod tests {
 862,61,35
 984,92,344
 425,690,689"); 
-        assert_eq!(part1, 40);
-    }    
+        assert_eq!(part2, 25272);
+    }
 
-    // #[test]
-    // fn test_part2() {
-    //     let (_, part2) = run("example"); 
-    //     assert_eq!(part2, );
-    // }
-    //
     // #[test]
     // fn test_real() {
     //     let input = utils::read_input(2025, 8);
