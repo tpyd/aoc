@@ -1,4 +1,22 @@
-use std::{collections::HashSet, hash::Hash};
+use std::{cmp::{Ordering, Reverse}, collections::{BinaryHeap, HashSet}};
+
+#[derive(PartialEq, PartialOrd)]
+struct Distance(f32, (usize, usize));
+
+impl Eq for Distance {}
+
+impl Ord for Distance {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        let ord = self.0.total_cmp(&other.0);
+        match ord {
+            Ordering::Greater => Ordering::Greater,
+            Ordering::Equal => Ordering::Equal,
+            Ordering::Less => Ordering::Less
+        }
+    }
+}
+
+type MinDistance = Reverse<Distance>;
 
 pub fn run(input: &str) -> (usize, i64) {
     let num_connections = if input.len() < 1000 { 10 } else { 1000 };
@@ -17,7 +35,7 @@ pub fn run(input: &str) -> (usize, i64) {
         })
         .collect();
 
-    let mut distances = Vec::new();
+    let mut distances: BinaryHeap<MinDistance> = BinaryHeap::new();
 
     for i in 0..box_locations.len() - 1 {
         for j in i+1..box_locations.len() {
@@ -26,11 +44,9 @@ pub fn run(input: &str) -> (usize, i64) {
 
             let distance = (((x2 - x1).pow(2) + (y2 - y1).pow(2) + (z2 - z1).pow(2)) as f32).sqrt();
 
-            distances.push((distance, (i, j)));
+            distances.push(Reverse(Distance(distance, (i, j))));
         }
     }
-
-    distances.sort_unstable_by(|a, b| b.0.total_cmp(&a.0));
 
     let mut connections: Vec<HashSet<usize>> = Vec::new();
     for i in 0..box_locations.len() {
@@ -44,7 +60,7 @@ pub fn run(input: &str) -> (usize, i64) {
     let mut counter = 0;
 
     loop {
-        let (_, (idx1, idx2)) = distances.pop().unwrap();
+        let (idx1, idx2) = distances.pop().unwrap().0.1;
 
         let matches: Vec<usize> = connections
             .iter()
@@ -53,40 +69,23 @@ pub fn run(input: &str) -> (usize, i64) {
             .map(|(idx, _)| idx)
             .collect();
         
-        // Merge if we have two
-        match matches.len() {
-            2 => {
-                let mut set1 = connections.remove(matches[0].max(matches[1]));
-                let set2 = connections.remove(matches[0].min(matches[1]));
-                set1.extend(&set2);
-                connections.push(set1);
+        // Merge if we have two different sets
+        if matches.len() == 2 {
+            let mut set1 = connections.remove(matches[0].max(matches[1]));
+            let set2 = connections.remove(matches[0].min(matches[1]));
+            set1.extend(&set2);
+            connections.push(set1);
 
-                if connections.len() == 1 && counter > num_connections {
-                    let (x1, _, _) = box_locations[idx1];
-                    let (x2, _, _) = box_locations[idx2];
-                    dbg!(&x1, &x2);
-                    part2 = x1 * x2;
-                }
-            },
-            1 => {
-                let mut set = connections.remove(matches[0]);
-                set.insert(idx1);
-                set.insert(idx2);
-                connections.push(set);
-
-                if connections.len() == 1 && counter > num_connections {
-                    let (x1, _, _) = box_locations[idx1];
-                    let (x2, _, _) = box_locations[idx2];
-                    dbg!(&x1, &x2);
-                    part2 = x1 * x2;
-                }
-            },
-            _ => {
-                let mut set = HashSet::new();
-                set.insert(idx1);
-                set.insert(idx2);
-                connections.push(set);
+            if connections.len() == 1 && counter > num_connections {
+                let (x1, _, _) = box_locations[idx1];
+                let (x2, _, _) = box_locations[idx2];
+                part2 = x1 * x2;
             }
+        } else {
+            let mut set = connections.remove(matches[0]);
+            set.insert(idx1);
+            set.insert(idx2);
+            connections.push(set);
         }
 
         counter += 1;
@@ -113,30 +112,30 @@ mod tests {
     use super::*;
     use crate::utils;
 
-//     #[test]
-//     fn test_part1() {
-//         let (part1, _) = run("162,817,812
-// 57,618,57
-// 906,360,560
-// 592,479,940
-// 352,342,300
-// 466,668,158
-// 542,29,236
-// 431,825,988
-// 739,650,466
-// 52,470,668
-// 216,146,977
-// 819,987,18
-// 117,168,530
-// 805,96,715
-// 346,949,466
-// 970,615,88
-// 941,993,340
-// 862,61,35
-// 984,92,344
-// 425,690,689"); 
-//         assert_eq!(part1, 40);
-//     }    
+    #[test]
+    fn test_part1() {
+        let (part1, _) = run("162,817,812
+57,618,57
+906,360,560
+592,479,940
+352,342,300
+466,668,158
+542,29,236
+431,825,988
+739,650,466
+52,470,668
+216,146,977
+819,987,18
+117,168,530
+805,96,715
+346,949,466
+970,615,88
+941,993,340
+862,61,35
+984,92,344
+425,690,689"); 
+        assert_eq!(part1, 40);
+    }    
 
     #[test]
     fn test_part2() {
@@ -163,13 +162,13 @@ mod tests {
         assert_eq!(part2, 25272);
     }
 
-    // #[test]
-    // fn test_real() {
-    //     let input = utils::read_input(2025, 8);
-    //     let (part1, part2) = run(&input);
-    //
-    //     assert_eq!(part1, 105952);
-    //     assert_eq!(part2, );
-    // }
+    #[test]
+    fn test_real() {
+        let input = utils::read_input(2025, 8);
+        let (part1, part2) = run(&input);
+
+        assert_eq!(part1, 105952);
+        assert_eq!(part2, 975931446);
+    }
 }
 
