@@ -10,6 +10,7 @@ mod year_2025_day_04;
 mod year_2025_day_05;
 mod year_2025_day_06;
 mod year_2025_day_07;
+mod year_2025_day_08;
 
 fn print_solution<T: std::fmt::Display, U: std::fmt::Display>(solution: (T, U)) {
     let (part1, part2) = solution;
@@ -41,6 +42,7 @@ fn main() {
         (2025, 5) => print_solution(year_2025_day_05::run(&input)),
         (2025, 6) => print_solution(year_2025_day_06::run(&input)),
         (2025, 7) => print_solution(year_2025_day_07::run(&input)),
+        (2025, 8) => print_solution(year_2025_day_08::run(&input)),
         (_, _) => println!("Could not find year/day combination")
     }
 }

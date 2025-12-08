@@ -52,3 +52,7 @@ harness = false
 name = "year_2025_day_07"
 harness = false
 
+[[bench]]
+name = "year_2025_day_08"
+harness = false
+
