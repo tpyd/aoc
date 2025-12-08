@@ -1,18 +1,13 @@
-use std::{cmp::{Ordering, Reverse}, collections::{BinaryHeap, HashSet}};
+use std::{cmp::Reverse, collections::{BinaryHeap, HashSet}};
 
 #[derive(PartialEq, PartialOrd)]
-struct Distance(f32, (usize, usize));
+struct Distance(f32, usize, usize);
 
 impl Eq for Distance {}
 
 impl Ord for Distance {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        let ord = self.0.total_cmp(&other.0);
-        match ord {
-            Ordering::Greater => Ordering::Greater,
-            Ordering::Equal => Ordering::Equal,
-            Ordering::Less => Ordering::Less
-        }
+        self.0.total_cmp(&other.0)
     }
 }
 
@@ -44,7 +39,7 @@ pub fn run(input: &str) -> (usize, i64) {
 
             let distance = (((x2 - x1).pow(2) + (y2 - y1).pow(2) + (z2 - z1).pow(2)) as f32).sqrt();
 
-            distances.push(Reverse(Distance(distance, (i, j))));
+            distances.push(Reverse(Distance(distance, i, j)));
         }
     }
 
@@ -60,7 +55,7 @@ pub fn run(input: &str) -> (usize, i64) {
     let mut counter = 0;
 
     loop {
-        let (idx1, idx2) = distances.pop().unwrap().0.1;
+        let Reverse(Distance(_, idx1, idx2)) = distances.pop().unwrap();
 
         let matches: Vec<usize> = connections
             .iter()
