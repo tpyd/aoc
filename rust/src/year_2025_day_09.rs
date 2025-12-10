@@ -1,31 +1,18 @@
-pub fn run(input: &str) -> (u64, u64) {
-    let mut tiles: Vec<(i32, i32)> = input
+pub fn run(input: &str) -> (i64, i64) {
+    let tiles: Vec<(i64, i64)> = input
         .trim_end()
         .split("\n")
         .map(|row| {
             let (a, b) = row.split_once(",").unwrap();
-            let x = a.parse::<i32>().unwrap();
-            let y = b.parse::<i32>().unwrap();
+            let x = a.parse::<i64>().unwrap();
+            let y = b.parse::<i64>().unwrap();
             (x, y)
         })
         .collect();
 
-    let mut max_area = 0;
-
-    for i in 0..tiles.len()-1 {
-        for j in i+1..tiles.len() {
-            let (x1, y1) = tiles[i];
-            let (x2, y2) = tiles[j];
-            let area = ((x2 - x1).abs() + 1) as u64 * ((y2 - y1).abs() + 1) as u64;
-            max_area = max_area.max(area);
-        }
-    }
-
     let mut edges = Vec::new();
-    let mut red_tiles = Vec::new();
 
-    // Get the lines as 'boxes' and corners
-    for i in 0..tiles.len() - 1 {
+    for i in 0..tiles.len()- 1 {
         let first = tiles[i];
         let second = tiles[i + 1];
 
@@ -34,7 +21,6 @@ pub fn run(input: &str) -> (u64, u64) {
         let max_x = first.0.max(second.0);
         let max_y = first.1.max(second.1);
 
-        red_tiles.push(first);
         edges.push((min_x, min_y, max_x, max_y));
     }
 
@@ -46,37 +32,41 @@ pub fn run(input: &str) -> (u64, u64) {
     let max_x = first.0.max(last.0);
     let max_y = first.1.max(last.1);
 
-    red_tiles.push(*last);
     edges.push((min_x, min_y, max_x, max_y));
 
-    // Find the largest square
-    let mut largest_size = 0;
+    let mut largest_part1 = 0;
+    let mut largest_part2 = 0;
 
     for i in 0..tiles.len() - 1 {
         'inner: for j in i + 1..tiles.len() {
-            let first = tiles[i];
-            let second = tiles[j];
+            let (x1, y1) = tiles[i];
+            let (x2, y2) = tiles[j];
 
-            let min_x = first.0.min(second.0);
-            let min_y = first.1.min(second.1);
-            let max_x = first.0.max(second.0);
-            let max_y = first.1.max(second.1);
+            let min_x = x1.min(x2);
+            let min_y = y1.min(y2);
+            let max_x = x1.max(x2);
+            let max_y = y1.max(y2);
 
-            let area = ((max_x - min_x).abs() + 1) as u64 * ((max_y - min_y).abs() + 1) as u64;
-            if area > largest_size {
+            let area = (max_x - min_x + 1) * (max_y - min_y + 1);
+            
+            if area > largest_part1 {
+                largest_part1 = area;
+            }
+
+            if area > largest_part2 {
                 for edge in &edges {
-                    let (edge_min_x, edge_min_y, edge_max_x, edge_max_y) = edge;  
-                    if *edge_min_x < max_x && *edge_max_x > min_x && *edge_min_y < max_y && *edge_max_y > min_y {
+                    let (e_min_x, e_min_y, e_max_x, e_max_y) = edge;  
+                    if *e_min_x < max_x && *e_max_x > min_x && *e_min_y < max_y && *e_max_y > min_y {
                         continue 'inner;
                     }
                 }
 
-                largest_size = area;
+                largest_part2 = area;
             }
         }
     }
 
-    (max_area, largest_size)
+    (largest_part1, largest_part2)
 }
 
 #[cfg(test)]
