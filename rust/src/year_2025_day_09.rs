@@ -1,37 +1,44 @@
 pub fn run(input: &str) -> (i64, i64) {
-    let tiles: Vec<(i64, i64)> = input
+    let tiles_str: Vec<&str> = input
         .trim_end()
         .split("\n")
-        .map(|row| {
-            let (a, b) = row.split_once(",").unwrap();
-            let x = a.parse::<i64>().unwrap();
-            let y = b.parse::<i64>().unwrap();
-            (x, y)
-        })
         .collect();
 
     let mut edges = Vec::new();
+    let mut tiles = Vec::new();
 
-    for i in 0..tiles.len()- 1 {
-        let first = tiles[i];
-        let second = tiles[i + 1];
+    for i in 0..tiles_str.len() - 1 {
+        let (x1_str, y1_str) = tiles_str[i].split_once(',').unwrap();
+        let (x2_str, y2_str) = tiles_str[i + 1].split_once(',').unwrap();
 
-        let min_x = first.0.min(second.0);
-        let min_y = first.1.min(second.1);
-        let max_x = first.0.max(second.0);
-        let max_y = first.1.max(second.1);
+        let x1 = x1_str.parse::<i64>().unwrap();
+        let y1 = y1_str.parse::<i64>().unwrap();
+        let x2 = x2_str.parse::<i64>().unwrap();
+        let y2 = y2_str.parse::<i64>().unwrap();
 
+        let min_x = x1.min(x2);
+        let min_y = y1.min(y2);
+        let max_x = x1.max(x2);
+        let max_y = y1.max(y2);
+
+        tiles.push((x1, y1));
         edges.push((min_x, min_y, max_x, max_y));
     }
 
-    let first = tiles.first().unwrap();
-    let last = tiles.last().unwrap();
+    let (x1_str, y1_str) = tiles_str[tiles_str.len() - 1].split_once(',').unwrap();
+    let (x2_str, y2_str) = tiles_str[0].split_once(',').unwrap();
 
-    let min_x = first.0.min(last.0);
-    let min_y = first.1.min(last.1);
-    let max_x = first.0.max(last.0);
-    let max_y = first.1.max(last.1);
+    let x1 = x1_str.parse::<i64>().unwrap();
+    let y1 = y1_str.parse::<i64>().unwrap();
+    let x2 = x2_str.parse::<i64>().unwrap();
+    let y2 = y2_str.parse::<i64>().unwrap();
 
+    let min_x = x1.min(x2);
+    let min_y = y1.min(y2);
+    let max_x = x1.max(x2);
+    let max_y = y1.max(y2);
+
+    tiles.push((x1, y1));
     edges.push((min_x, min_y, max_x, max_y));
 
     let mut largest_part1 = 0;
