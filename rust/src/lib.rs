@@ -12,4 +12,5 @@ pub mod year_2025_day_06;
 pub mod year_2025_day_07;
 pub mod year_2025_day_08;
 pub mod year_2025_day_09;
+pub mod year_2025_day_10;
 
