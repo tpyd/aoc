@@ -4,7 +4,7 @@ use aoc::year_2025_day_10;
 
 fn bench_year_2025_day_10(c: &mut Criterion) {
     let mut group = c.benchmark_group("year_2025_day_10");
-    let input = read_input(2025, 1);
+    let input = read_input(2025, 10);
 
     group.bench_function("solve", |b| b.iter(|| year_2025_day_10::run(&input)));
 

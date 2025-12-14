@@ -42,12 +42,6 @@ fn possible_buttons(light_goal: &[bool], buttons: Vec<Vec<u32>>) -> Vec<Vec<usiz
         }
     }
 
-    // for a in &mut yes {
-    //     a.sort_unstable();
-    // }
-
-    yes.sort_unstable();
-    yes.dedup();
     yes
 }
 
@@ -78,32 +72,6 @@ fn find(
         // dbg!("calculated routes successfully");
         cache.insert(sub_ans.clone(), ways_to_get_there.clone());
     }
-
-    // TODO do we need sort?
-    ways_to_get_there.sort_unstable_by(|a, b| a.len().cmp(&b.len()));
-
-    // Debug START
-    let mut p1 = String::new(); 
-    for s in sub_ans {
-        p1.push(if s { '#' } else { '.' });
-    }
-    // dbg!(&joltages, &p1);
-    for way in &ways_to_get_there {
-        let mut debugbuttons = String::new();
-        for idx in way {
-            let button = &buttons[*idx];
-            let mut b_string = String::new();
-            b_string.push('(');
-            for b in button {
-                b_string.push_str(&b.to_string());
-                b_string.push(',');
-            }
-            b_string.push_str(") ");
-            debugbuttons.push_str(&b_string);
-        }
-        // dbg!(&debugbuttons);
-    }
-    // Debug END
 
     let mut min_presses = 1000000;
 
@@ -151,7 +119,6 @@ pub fn run(input: &str) -> (i32, u32) {
     let mut part1 = 0;
     let mut part2 = 0;
 
-    // let mut cache = HashMap::new();
     let length = lines.clone().count();
 
     for (round, line) in lines.enumerate() {
@@ -231,157 +198,17 @@ pub fn run(input: &str) -> (i32, u32) {
         }
 
         // Part 2
-        // dbg!(&light_goal, &buttons, &joltage_goal);
         let mut cache: HashMap<Vec<bool>, Vec<Vec<usize>>> = HashMap::new(); 
-
         let mut data = Vec::new();
         for i in joltage_goal {
             data.push(i as u32);
         }
 
         let button_presses = find(data, &buttons, &mut cache);
-        // dbg!(&button_presses);
         part2 += button_presses;
 
         let iterstr = format!("Iteration {} / {}", round+1, length);
         dbg!(iterstr);
-
-        //
-        // goal = [3, 5, 4, 7]
-        // a b0 = [0, 0, 0, 1]  max 7 times
-        // b b1 = [0, 1, 0, 1]  max 5 times
-        // c b2 = [0, 0, 1, 0]  max 4 times
-        // d b3 = [0, 0, 1, 1]  max 4 times
-        // e b4 = [1, 0, 1, 0]  max 3 times
-        // f b5 = [1, 1, 0, 0]  max 3 times
-        //
-        // at least 3 button presses
-        // at max 26 button presses?
-        //
-        //
-        // minimize a + b + c + d + e + f  (lets call it x)
-        // xb = [3,5,4,7]
-        //
-        // a * b0 + b * b1 + c * b2 + d * b3 + e * b4 + f * b5 = [3, 5, 4, 7]
-        // e + f = 3
-        // b + f = 5
-        // c + d + e = 4
-        // a + b + d = 7
-        //
-        //
-        // Integer Linear Programming (ILP) problem
-        // Solver is not that complicated. Complicated part is finding cuts to make it faster
-
-        // Pure Python MILP solver
-        // https://www.reddit.com/r/adventofcode/comments/1pity70/comment/nt988z4/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-
-        // Scipy with MILP
-        // https://www.reddit.com/r/adventofcode/comments/1pity70/comment/nt9atam/
-        
-        // TODO i think the buttons are already gauss-elimiated, just needs sorting
-        // minimize x  (sum of button presses)
-        // Ax = b      (buttons * button presses = joltage goal)
-        // x => 0      (button presses have to be positive)
-        
-        // m = 6, n = 4
-        // button matrix m*n (6*4 matrix)
-        // let mut button_vecs: Vec<Vec<i32>> = Vec::new();
-        // let mut a = Vec::new();
-        // for button in &buttons {
-        //     let mut bits = 0i32;
-        //     for i in button {
-        //         bits |= 1 << i;
-        //     }
-        //     a.push(bits);
-        //     // let mut vec = Vec::new();
-        //     // for _ in 0..joltage_goal.len() {
-        //     //     vec.push(0);
-        //     // }
-        //     // for i in button {
-        //     //     vec[*i as usize] = 1;
-        //     // }
-        //     // button_vecs.push(vec);
-        // }
-
-        // dbg!(&a, &a.len());
-        //
-        // // b vector m (6)
-        // let mut b = vec![0; joltage_goal.len()];
-        // for i in 0..joltage_goal.len() {
-        //     b[i] = joltage_goal[i] as i32;
-        // }
-        // dbg!(&b, &b.len());
-        //
-        // // variables, c or x vector n (4)
-        // let mut joltages = Vec::new();
-        // for _ in 0..buttons.len() {
-        //     joltages.push(0.0);
-        // }
-        // let c = joltages;
-        //
-        // dbg!(&c, &c.len());
-
-        // let constraints = build_constraints(&a, &b);
-        // let presses = branch_and_bound(&constraints);
-        // dbg!(&presses);
-
-        // let (solution, obj) = simplex(&a, &b, &c).unwrap();
-        // dbg!(&solution, &obj);
-
-
-        // -------------------- DFS --------------------- //
-        // let mut joltages = Vec::new();
-        // for _ in 0..joltage_goal.len() {
-        //     joltages.push(0);
-        // }
-
-        // Try buttons with many changes first
-        // buttons.sort_unstable_by(|a, b| b.len().cmp(&a.len()));
-        // let mut total_button_presses = 999999;
-        //
-        // let mut stack = vec![(0, joltages)];
-        //
-        // 'outer: loop {
-        //     if stack.len() == 0 {
-        //         break;
-        //     }
-        //     let (previous_button_presses, previous_joltages) = stack.pop().unwrap();
-        //
-        //     // Try every button
-        //     'nextbutton: for button in &buttons {
-        //         let mut current_joltages = previous_joltages.clone();
-        //         let next_button_presses = previous_button_presses + 1;
-        //
-        //         if next_button_presses >= total_button_presses {
-        //             continue 'nextbutton;
-        //         }
-        //
-        //         // Apply button
-        //         for i in button {
-        //             current_joltages[*i as usize] += 1;
-        //         }
-        //
-        //         // Check if its the goal joltage
-        //         if current_joltages == joltage_goal {
-        //             if next_button_presses < total_button_presses {
-        //                 total_button_presses = next_button_presses;
-        //             }
-        //             break 'outer;
-        //         }
-        //
-        //         // Prune
-        //         for i in 0..current_joltages.len() {
-        //             if current_joltages[i] > joltage_goal[i] {
-        //                 continue 'nextbutton;
-        //             }
-        //         }
-        //
-        //         stack.push((next_button_presses, current_joltages));
-        //     }
-        // }
-        // dbg!("solved");
-        // part2 += total_button_presses;
-        // -------------------- DFS --------------------- //
     }
 
     (part1, part2)
