@@ -1,116 +1,66 @@
-use std::collections::{HashMap, HashSet};
-
-// TODO can we just do button indicies
-// TODO can we just to button presses?
-fn light_solutions(light_goal: &u32, buttons: Vec<Vec<u32>>) -> HashSet<Vec<usize>> {
-    let light_start = 0u32;
-
+// TODO change to sum of buttons
+fn combinations(buttons: &[Vec<u32>]) -> Vec<(Vec<usize>, u32)> {
     let max_len = 2usize.pow(buttons.len() as u32);
-    let mut combinations: Vec<(u32, Vec<usize>)> = Vec::with_capacity(max_len);
+    // TODO change to hashmap
+    let mut paths: Vec<(Vec<usize>, u32)> = Vec::with_capacity(max_len);
 
-    combinations.push((light_start.clone(), Vec::new()));
+    paths.push((Vec::new(), 0));
 
-    let mut solutions = HashSet::new();
-
-    for (i, button) in buttons.iter().enumerate() {
+    for (i, _) in buttons.iter().enumerate() {
         // We either pressed it or not 
-        let mut paths_copy = combinations.clone();
+        let mut new_paths = paths.clone();
 
-        for (lights, button_indicies) in &combinations {
-            // Create a path where the button was pushed
-            let mut new_lights = lights.clone();
-            let mut new_indicies = button_indicies.clone();
-            new_indicies.push(i);
-            for b in button {
-                new_lights ^= 1 << b;
-            }
-
-            if new_lights == *light_goal && !solutions.contains(&new_indicies) {
-                solutions.insert(new_indicies.clone());
-            }
-
-            paths_copy.push((new_lights, new_indicies));
-
-            // Create a path where the button was not pushed
-            let lights2 = lights.clone();
-            let buttons2 = button_indicies.clone();
-            if !paths_copy.contains(&(lights.clone(), button_indicies.clone())) {
-                paths_copy.push((lights2, buttons2.clone()));
-            }
-
-            if lights2 == *light_goal && !solutions.contains(&buttons2) {
-                solutions.insert(buttons2);
-            }
+        for (button_indicies, presses) in &paths {
+            // Add a path where the button was pushed
+            let mut pushed_indicies = button_indicies.clone();
+            pushed_indicies.push(i);
+            new_paths.push((pushed_indicies, presses + 1));
         }
 
-        combinations = paths_copy;
+        paths = new_paths;
     }
 
-    solutions
+    paths
 }
 
 fn find(
     joltages: Vec<u32>, 
-    buttons: &Vec<Vec<u32>>, 
-    cache: &mut HashMap<u32, HashSet<Vec<usize>>>
+    buttons: &Vec<Vec<u32>>,
+    button_combinations: &Vec<(Vec<usize>, u32)>
 ) -> u32 {
     if joltages.iter().all(|j| *j == 0) {
         return 0;
     }
 
-    // Make it into a part 1 problem
-    let mut lights = 0u32;  // TODO u16 faster?
-    for (i, j) in joltages.iter().enumerate() {
-        if j % 2 != 0 {
-            lights |= 1 << i;
-        }
-    }
-    // dbg!(format!("{:b}", lights));  // NOTE: its backwards
-    
-    // Find all the different ways to solve it. Returns indicies of buttons
-    let ways_to_get_there: HashSet<Vec<usize>>;
-    if cache.contains_key(&lights) {
-        ways_to_get_there = cache.get(&lights).unwrap().clone();
-    } else {
-        ways_to_get_there = light_solutions(&lights, buttons.clone());
-        cache.insert(lights, ways_to_get_there.clone());
-    }
-
     let mut min_presses = 1000000;
 
-    // Have to check every way. We can't just do minimal button presses, there could be
-    // other paths to the correct answer with fewer button presses.
-    'outer: for way in &ways_to_get_there {
-        // Press the buttons, should end up with only even numbers
-        let mut new_joltage = joltages.clone();
-        for idx in way {
+    'outer: for (button_combination, presses) in button_combinations {
+        let mut new_joltage = joltages.clone();  
+
+        for idx in button_combination {
             let button = &buttons[*idx];
             for b in button {
                 let joltage_value = new_joltage[*b as usize];
                 if joltage_value == 0 {
-                    // dbg!("nop");
                     continue 'outer;
                 }
                 new_joltage[*b as usize] -= 1;
             }
-
         }
 
-        // Now we have only even numbers. Divide by 2
         for i in 0..new_joltage.len() {
             if new_joltage[i] % 2 != 0 {
-                dbg!("WARNING");
+                continue 'outer;
             }
-            new_joltage[i] /= 2;     
+            new_joltage[i] /= 2;
         }
 
-        // Find the number of presses required to get here
-        let presses_to_get_here = 2 * find(new_joltage, buttons, cache) + way.len() as u32;
+        let presses_to_get_here = 2 * find(new_joltage.clone(), buttons, button_combinations) + presses;
         if presses_to_get_here < min_presses {  // TODO faster if we swap with .min()?
             min_presses = presses_to_get_here;
         }
     }
-     
+
     min_presses
 }
 
@@ -201,13 +151,14 @@ pub fn run(input: &str) -> (i32, u32) {
         }
 
         // Part 2
-        let mut cache: HashMap<u32, HashSet<Vec<usize>>> = HashMap::new(); 
         let mut data = Vec::new();
         for i in joltage_goal {
             data.push(i as u32);
         }
 
-        let button_presses = find(data, &buttons, &mut cache);
+        let button_combinations = combinations(&buttons);
+
+        let button_presses = find(data, &buttons, &button_combinations);
         part2 += button_presses;
 
         let iterstr = format!("Iteration {} / {}", round+1, length);
