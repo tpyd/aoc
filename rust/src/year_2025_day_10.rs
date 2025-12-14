@@ -1,76 +1,79 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::{HashMap, HashSet};
 
-// TODO can we do bitmask?
 // TODO can we just do button indicies
 // TODO can we just to button presses?
-fn possible_buttons(light_goal: &[bool], buttons: Vec<Vec<u32>>) -> Vec<Vec<usize>> {
-    let light_start = vec![false; light_goal.len()];
-    let mut paths = VecDeque::new();
+fn light_solutions(light_goal: &u32, buttons: Vec<Vec<u32>>) -> HashSet<Vec<usize>> {
+    let light_start = 0u32;
 
-    paths.push_back((light_start.clone(), Vec::new()));
+    let max_len = 2usize.pow(buttons.len() as u32);
+    let mut combinations: Vec<(u32, Vec<usize>)> = Vec::with_capacity(max_len);
 
-    let mut yes = Vec::new();
+    combinations.push((light_start.clone(), Vec::new()));
+
+    let mut solutions = HashSet::new();
 
     for (i, button) in buttons.iter().enumerate() {
         // We either pressed it or not 
-        let mut paths_copy = paths.clone();
-        for (lights, button_indicies) in &paths {
+        let mut paths_copy = combinations.clone();
+
+        for (lights, button_indicies) in &combinations {
             // Create a path where the button was pushed
             let mut new_lights = lights.clone();
             let mut new_indicies = button_indicies.clone();
             new_indicies.push(i);
             for b in button {
-                new_lights[*b as usize] ^= true;
+                new_lights ^= 1 << b;
             }
 
-            paths_copy.push_back((new_lights, new_indicies));
+            if new_lights == *light_goal && !solutions.contains(&new_indicies) {
+                solutions.insert(new_indicies.clone());
+            }
+
+            paths_copy.push((new_lights, new_indicies));
 
             // Create a path where the button was not pushed
             let lights2 = lights.clone();
             let buttons2 = button_indicies.clone();
             if !paths_copy.contains(&(lights.clone(), button_indicies.clone())) {
-                paths_copy.push_back((lights2, buttons2));
+                paths_copy.push((lights2, buttons2.clone()));
+            }
+
+            if lights2 == *light_goal && !solutions.contains(&buttons2) {
+                solutions.insert(buttons2);
             }
         }
-        paths = paths_copy;
+
+        combinations = paths_copy;
     }
 
-    // Check each path
-    for (lights, button_idicies) in paths {
-        if lights == light_goal {
-            yes.push(button_idicies);
-        }
-    }
-
-    yes
+    solutions
 }
 
 fn find(
     joltages: Vec<u32>, 
     buttons: &Vec<Vec<u32>>, 
-    cache: &mut HashMap<Vec<bool>, Vec<Vec<usize>>>
+    cache: &mut HashMap<u32, HashSet<Vec<usize>>>
 ) -> u32 {
     if joltages.iter().all(|j| *j == 0) {
         return 0;
     }
 
     // Make it into a part 1 problem
-    let mut sub_ans = Vec::new();
-    for j in &joltages {
-        sub_ans.push(j % 2 != 0);
+    let mut lights = 0u32;  // TODO u16 faster?
+    for (i, j) in joltages.iter().enumerate() {
+        if j % 2 != 0 {
+            lights |= 1 << i;
+        }
     }
-    // true, true, false true
+    // dbg!(format!("{:b}", lights));  // NOTE: its backwards
     
     // Find all the different ways to solve it. Returns indicies of buttons
-    let mut ways_to_get_there: Vec<Vec<usize>>;
-    if cache.contains_key(sub_ans.as_slice()) {
-        // dbg!("cache hit");
-        ways_to_get_there = cache.get(&sub_ans).unwrap().to_vec();
+    let ways_to_get_there: HashSet<Vec<usize>>;
+    if cache.contains_key(&lights) {
+        ways_to_get_there = cache.get(&lights).unwrap().clone();
     } else {
-        // dbg!("cache miss");
-        ways_to_get_there = possible_buttons(&sub_ans, buttons.clone());
-        // dbg!("calculated routes successfully");
-        cache.insert(sub_ans.clone(), ways_to_get_there.clone());
+        ways_to_get_there = light_solutions(&lights, buttons.clone());
+        cache.insert(lights, ways_to_get_there.clone());
     }
 
     let mut min_presses = 1000000;
@@ -198,7 +201,7 @@ pub fn run(input: &str) -> (i32, u32) {
         }
 
         // Part 2
-        let mut cache: HashMap<Vec<bool>, Vec<Vec<usize>>> = HashMap::new(); 
+        let mut cache: HashMap<u32, HashSet<Vec<usize>>> = HashMap::new(); 
         let mut data = Vec::new();
         for i in joltage_goal {
             data.push(i as u32);
