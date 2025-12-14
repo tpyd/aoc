@@ -161,8 +161,8 @@ pub fn run(input: &str) -> (i32, u32) {
         let button_presses = find(data, &buttons, &button_combinations);
         part2 += button_presses;
 
-        let iterstr = format!("Iteration {} / {}", round+1, length);
-        dbg!(iterstr);
+        // let iterstr = format!("Iteration {} / {}", round+1, length);
+        // dbg!(iterstr);
     }
 
     (part1, part2)
@@ -189,13 +189,13 @@ mod tests {
         assert_eq!(part2, 33);
     }
 
-    // #[test]
-    // fn test_real() {
-    //     let input = utils::read_input(, );
-    //     let (part1, part2) = run(&input);
-    //
-    //     assert_eq!(part1, 385);
-    //     assert_eq!(part2, 16757);
-    // }
+    #[test]
+    fn test_real() {
+        let input = utils::read_input(2025, 10);
+        let (part1, part2) = run(&input);
+
+        assert_eq!(part1, 385);
+        assert_eq!(part2, 16757);
+    }
 }
 
