@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 // TODO change to sum of buttons
 fn combinations(buttons: &[Vec<u32>]) -> Vec<(Vec<usize>, u32)> {
     let max_len = 2usize.pow(buttons.len() as u32);
@@ -26,7 +28,8 @@ fn combinations(buttons: &[Vec<u32>]) -> Vec<(Vec<usize>, u32)> {
 fn find(
     joltages: Vec<u32>, 
     buttons: &Vec<Vec<u32>>,
-    button_combinations: &Vec<(Vec<usize>, u32)>
+    button_combinations: &Vec<(Vec<usize>, u32)>,
+    cache: &mut HashMap<Vec<u32>, u32>
 ) -> u32 {
     if joltages.iter().all(|j| *j == 0) {
         return 0;
@@ -34,7 +37,7 @@ fn find(
 
     let mut min_presses = 1000000;
 
-    'outer: for (button_combination, presses) in button_combinations {
+    'outer: for (button_combination, combination_presses) in button_combinations {
         let mut new_joltage = joltages.clone();  
 
         for idx in button_combination {
@@ -55,9 +58,18 @@ fn find(
             new_joltage[i] /= 2;
         }
 
-        let presses_to_get_here = 2 * find(new_joltage.clone(), buttons, button_combinations) + presses;
-        if presses_to_get_here < min_presses {  // TODO faster if we swap with .min()?
-            min_presses = presses_to_get_here;
+        let mut presses;
+        if cache.contains_key(&new_joltage) {
+            presses = *cache.get(&new_joltage).unwrap();
+        } else {
+            presses = find(new_joltage.clone(), buttons, button_combinations, cache);
+            cache.insert(new_joltage, presses);
+        }
+
+        presses = 2 * presses + combination_presses;
+
+        if presses < min_presses {  // TODO faster if we swap with .min()?
+            min_presses = presses;
         }
     }
 
@@ -157,12 +169,13 @@ pub fn run(input: &str) -> (i32, u32) {
         }
 
         let button_combinations = combinations(&buttons);
+        let mut cache = HashMap::new();
 
-        let button_presses = find(data, &buttons, &button_combinations);
+        let button_presses = find(data, &buttons, &button_combinations, &mut cache);
         part2 += button_presses;
 
-        // let iterstr = format!("Iteration {} / {}", round+1, length);
-        // dbg!(iterstr);
+        let iterstr = format!("Iteration {} / {}", round+1, length);
+        dbg!(iterstr);
     }
 
     (part1, part2)
