@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{hash_map::Entry, HashMap};
 
 // TODO change to sum of buttons
 fn combinations(buttons: &[Vec<u32>]) -> Vec<(Vec<usize>, u32)> {
@@ -38,33 +38,33 @@ fn find(
     let mut min_presses = 1000000;
 
     'outer: for (button_combination, combination_presses) in button_combinations {
-        let mut new_joltage = joltages.to_vec();
+        let mut new_joltages = joltages.to_vec();
 
         for idx in button_combination {
             let button = &buttons[*idx];
             for b in button {
-                let joltage_value = new_joltage[*b as usize];
+                let joltage_value = new_joltages[*b as usize];
                 if joltage_value == 0 {
                     continue 'outer;
                 }
-                new_joltage[*b as usize] -= 1;
+                new_joltages[*b as usize] -= 1;
             }
         }
 
-        for i in 0..new_joltage.len() {
-            if new_joltage[i] % 2 != 0 {
+        for i in 0..new_joltages.len() {
+            if new_joltages[i] % 2 != 0 {
                 continue 'outer;
             }
-            new_joltage[i] /= 2;
+            new_joltages[i] /= 2;
         }
 
-        let mut presses;
-        if cache.contains_key(&new_joltage) {
-            presses = *cache.get(&new_joltage).unwrap();
+        let mut presses = if let Some(&presses) = cache.get(&new_joltages) {
+            presses
         } else {
-            presses = find(&new_joltage, buttons, button_combinations, cache);
-            cache.insert(new_joltage.to_vec(), presses);
-        }
+            let presses = find(&new_joltages, buttons, button_combinations, cache);
+            cache.insert(new_joltages.to_vec(), presses);
+            presses
+        };
 
         presses = 2 * presses + combination_presses;
 
