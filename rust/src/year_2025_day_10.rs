@@ -26,7 +26,7 @@ fn combinations(buttons: &[Vec<u32>]) -> Vec<(Vec<usize>, u32)> {
 }
 
 fn find(
-    joltages: Vec<u32>, 
+    joltages: &[u32], 
     buttons: &Vec<Vec<u32>>,
     button_combinations: &Vec<(Vec<usize>, u32)>,
     cache: &mut HashMap<Vec<u32>, u32>
@@ -38,7 +38,7 @@ fn find(
     let mut min_presses = 1000000;
 
     'outer: for (button_combination, combination_presses) in button_combinations {
-        let mut new_joltage = joltages.clone();  
+        let mut new_joltage = joltages.to_vec();
 
         for idx in button_combination {
             let button = &buttons[*idx];
@@ -62,8 +62,8 @@ fn find(
         if cache.contains_key(&new_joltage) {
             presses = *cache.get(&new_joltage).unwrap();
         } else {
-            presses = find(new_joltage.clone(), buttons, button_combinations, cache);
-            cache.insert(new_joltage, presses);
+            presses = find(&new_joltage, buttons, button_combinations, cache);
+            cache.insert(new_joltage.to_vec(), presses);
         }
 
         presses = 2 * presses + combination_presses;
@@ -171,11 +171,11 @@ pub fn run(input: &str) -> (i32, u32) {
         let button_combinations = combinations(&buttons);
         let mut cache = HashMap::new();
 
-        let button_presses = find(data, &buttons, &button_combinations, &mut cache);
+        let button_presses = find(&data, &buttons, &button_combinations, &mut cache);
         part2 += button_presses;
 
-        let iterstr = format!("Iteration {} / {}", round+1, length);
-        dbg!(iterstr);
+        // let iterstr = format!("Iteration {} / {}", round+1, length);
+        // dbg!(iterstr);
     }
 
     (part1, part2)
