@@ -37,7 +37,7 @@ pub fn run(input: &str) -> (usize, i64) {
             let (x1, y1, z1) = box_locations[i]; 
             let (x2, y2, z2) = box_locations[j]; 
 
-            let distance = (((x2 - x1).pow(2) + (y2 - y1).pow(2) + (z2 - z1).pow(2)) as f32).sqrt();
+            let distance = ((x2 - x1).pow(2) + (y2 - y1).pow(2) + (z2 - z1).pow(2)) as f32;
 
             distances.push(Reverse(Distance(distance, i, j)));
         }
