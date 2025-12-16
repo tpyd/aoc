@@ -3,11 +3,11 @@ use std::collections::{hash_map::Entry, HashMap};
 fn combinations(
     buttons: &[Vec<usize>], 
     len: usize
-) -> HashMap<u32, Vec<(Vec<u32>, u32)>> {
+) -> HashMap<u32, Vec<(Vec<i32>, u32)>> {
     let max_len = 2usize.pow(buttons.len() as u32);
 
-    let mut paths: Vec<(Vec<u32>, u32)> = Vec::with_capacity(max_len);
-    let mut combinations: HashMap<u32, Vec<(Vec<u32>, u32)>> = HashMap::new();
+    let mut paths: Vec<(Vec<i32>, u32)> = Vec::with_capacity(max_len);
+    let mut combinations: HashMap<u32, Vec<(Vec<i32>, u32)>> = HashMap::new();
 
     paths.push((vec![0; len], 0));
 
@@ -66,9 +66,9 @@ fn combinations(
 }
 
 fn find(
-    joltages: &[u32], 
-    button_combinations: &HashMap<u32, Vec<(Vec<u32>, u32)>>,
-    cache: &mut HashMap<Vec<u32>, u32>
+    joltages: &[i32], 
+    button_combinations: &HashMap<u32, Vec<(Vec<i32>, u32)>>,
+    cache: &mut HashMap<Vec<i32>, u32>
 ) -> u32 {
     if joltages.iter().all(|j| *j == 0) {
         return 0;
@@ -87,15 +87,15 @@ fn find(
         None => return min_presses
     };
 
-    'outer: for (acc_button, combination_presses) in filtered_buttons {
-        let mut new_joltages = joltages.to_vec();
+    for (acc_button, combination_presses) in filtered_buttons {
+        let new_joltages: Vec<i32> = acc_button
+            .iter()
+            .zip(joltages)
+            .map(|(acc, j)| (j - acc) / 2)
+            .collect();
 
-        for (i, v) in acc_button.iter().enumerate() {
-            let value = new_joltages[i];
-            if *v > value {
-                continue 'outer;
-            }
-            new_joltages[i] = (new_joltages[i] - v) / 2;
+        if new_joltages.iter().any(|&j| j < 0) {
+            continue;
         }
 
         let mut rec_presses = match cache.get(&new_joltages) {
@@ -142,10 +142,10 @@ pub fn run(input: &str) -> (u32, u32) {
                 .collect())
             .collect();
 
-        let joltages: Vec<u32> = joltages_str
+        let joltages: Vec<i32> = joltages_str
             .trim_matches(|c| c == '{' || c == '}')
             .split(",")
-            .map(|n| n.parse::<u32>().unwrap())
+            .map(|n| n.parse::<i32>().unwrap())
             .collect();
 
         let len = joltages.len();
