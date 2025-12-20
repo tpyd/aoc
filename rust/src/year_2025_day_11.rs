@@ -1,7 +1,7 @@
 use core::panic;
-use std::collections::{hash_map::Entry, HashMap, HashSet, VecDeque};
+use std::collections::{hash_map::Entry, HashMap, VecDeque};
 
-pub fn run(input: &str) -> (i32, u128) {
+pub fn run(input: &str) -> (u128, u128) {
     let lines = input
         .trim_end()
         .split("\n");
@@ -20,65 +20,8 @@ pub fn run(input: &str) -> (i32, u128) {
 
         graph.insert(from, to.to_vec());
     }
-    
-    let mut to_check = vec!["you"];
-    let mut part1 = 0;
-    
-    while let Some(device) = to_check.pop() {
-        let new_devices = match graph.get(device) {
-            Some(d) => d,
-            None => continue
-        };
 
-        for new_device in new_devices {
-            to_check.push(new_device);
-
-            if new_device == "out" {
-                part1 += 1;
-            }
-        }
-    }
-
-    // fn runthing(start: String, end: String, connections: &HashMap<String, Vec<String>>) -> u128 {
-    //     let mut to_check: VecDeque<&str> = VecDeque::new();
-    //     to_check.push_back(&start);
-    //
-    //     let mut lookup: HashMap<&str, u128> = HashMap::new();
-    //     lookup.insert(&start, 1);
-    //
-    //     while let Some(device) = to_check.pop_front() {
-    //         let new_devices = match connections.get(device) {
-    //             Some(d) => d,
-    //             None => continue
-    //         };
-    //
-    //         let paths = *lookup.get(&device).unwrap();
-    //
-    //         for new_device in new_devices {
-    //             match lookup.entry(&new_device) {
-    //                 Entry::Occupied(mut e) => {
-    //                     e.insert(paths + e.get());
-    //                 },
-    //                 Entry::Vacant(e) => {
-    //                     e.insert(paths);
-    //                 }
-    //             }
-    //
-    //             if !to_check.contains(&new_device.as_str()) {
-    //                 to_check.push_back(new_device);
-    //             }
-    //         }
-    //     }
-    //
-    //     *lookup.get(end.as_str()).unwrap()
-    // }
-    //
-    // let a = runthing("svr".to_owned(), "fft".to_owned(), &connections);
-    // let b = runthing("fft".to_owned(), "dac".to_owned(), &connections);
-    // let c = runthing("dac".to_owned(), "out".to_owned(), &connections);
-    // dbg!(&a, &b, &c);
-    // let d = vec![a, b, c];
-    // let part2 = a * b * c;
+    graph.insert("out".to_string(), Vec::new());
     
     fn topological_sort(graph: &HashMap<String, Vec<String>>) -> Vec<String> {
         let mut indeg: HashMap<String, u32> = HashMap::new();
@@ -100,8 +43,6 @@ pub fn run(input: &str) -> (i32, u128) {
             }
         }
 
-        // dbg!(&indeg);
-
         let mut q: VecDeque<String> = VecDeque::new();
         let no_in = indeg.iter()
             .filter(|(_, v)| **v == 0)
@@ -109,8 +50,6 @@ pub fn run(input: &str) -> (i32, u128) {
         for k in no_in {
             q.push_back(k.to_string());
         }
-
-        // dbg!(&q);
 
         let mut order: Vec<String> = Vec::new();
 
@@ -135,13 +74,6 @@ pub fn run(input: &str) -> (i32, u128) {
             }
         }
 
-        // if graph.keys().count() != order.len() {
-        //     dbg!(&graph, &order);
-        //     panic!();
-        // }
-
-        // dbg!(&order);
-
         return order;
     }
 
@@ -158,23 +90,15 @@ pub fn run(input: &str) -> (i32, u128) {
         }
 
         dp.insert(from, 1);
-        dp.insert(to.clone(), 0);  // TODO maybe add when parsing input instead
-        // dbg!(&dp);
+        dp.insert(to.clone(), 0);  // Neccessary for part 1 test since it doesnt have fft or dac
                                    
         for u in topo_order {
             if *dp.get(u).unwrap() == 0 {
-            //     // dbg!("no", &u);
                 continue;
             }
             let u_val = dp.get(u).unwrap().clone();
 
-            // Last element doesnt have entry in graph
-            if graph.get(u).is_none() {
-                continue;
-            }
-
             for v in graph.get(u).unwrap() {
-                // dbg!(&u, &v);
                 match dp.entry(v.to_string()) {
                     Entry::Occupied(mut e) => {
                         e.insert(e.get() + u_val);
@@ -184,7 +108,6 @@ pub fn run(input: &str) -> (i32, u128) {
             }
         }
 
-        // dbg!(&dp);
         *dp.get(&to).unwrap()
     }
 
@@ -193,14 +116,15 @@ pub fn run(input: &str) -> (i32, u128) {
     // TODO change variable names to be more in line with the task
     // TODO lower u128 if possible
     // TODO can we filter topo_order before these calls?
-    graph.insert("out".to_string(), Vec::new());
+    // TODO add possibility of dac before fft
     let topo_order = topological_sort(&graph);
+    
+    let part1 = count_paths(&graph, "you".to_string(), "out".to_string(), &topo_order);
+
     let a = count_paths(&graph, "svr".to_string(), "fft".to_string(), &topo_order);
     let b = count_paths(&graph, "fft".to_string(), "dac".to_string(), &topo_order);
     let c = count_paths(&graph, "dac".to_string(), "out".to_string(), &topo_order);
     let part2 = a * b * c;
-    
-    // 511378159390560
 
     (part1, part2)
 }
