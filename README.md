@@ -1,4 +1,4 @@
-# Advent of Code in Rust
+# Advent of Code
 
 ## Setup a new day
 - Save the input as `input/year_<year>_day_<day>.txt`
@@ -12,12 +12,8 @@
 `cargo run <year> <day>`
 
 ## Run tests
-`cargo test --release -- year_<year>_day_<day>`
+`cargo test -- year_<year>_day_<day>`
 
 ## Benchmark
 `cargo bench --bench year_<year>_day_<day>`
-
-## Profiling
-`cargo install samply`
-`cargo build && samply record ./target/debug/aoc <year> <day>`
 
