@@ -1,4 +1,4 @@
-pub fn run(input: &str) -> (i32, String) {
+pub fn run(input: &str) -> (i32, Option<i32>) {
     let regions: Vec<&str> = input
         .trim_end()
         .split("\n\n")
@@ -9,7 +9,7 @@ pub fn run(input: &str) -> (i32, String) {
 
     // Testcase
     if regions.len() < 10 {
-        return (2, String::new());
+        return (2, None);
     }
         
     let mut part1 = 0;
@@ -35,7 +35,7 @@ pub fn run(input: &str) -> (i32, String) {
         }
     }
 
-    (part1, String::new())
+    (part1, None)
 }
 
 #[cfg(test)]

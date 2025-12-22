@@ -16,9 +16,9 @@ mod year_2025_day_10;
 mod year_2025_day_11;
 mod year_2025_day_12;
 
-fn print_solution<T: std::fmt::Display, U: std::fmt::Display>(solution: (T, U)) {
+fn print_solution<T: std::fmt::Debug, U: std::fmt::Debug>(solution: (T, U)) {
     let (part1, part2) = solution;
-    println!("{}\n{}", part1, part2);
+    println!("{:?}\n{:?}", part1, part2);
 }
 
 fn main() {
