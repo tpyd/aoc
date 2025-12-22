@@ -1,51 +1,43 @@
 pub fn run(input: &str) -> (i32, i32) {
     let rotations = input
-        .trim_end()
-        .split('\n')
-        .into_iter()
+        .lines()
         .map(|x| {
             let (dir, n) = x.split_at(1);
             (dir, n.parse::<i32>().unwrap())
         });
 
     let mut dial = 50;
-    let mut zeros_part1 = 0;
-    let mut zeros_part2 = 0;
+    let mut part1 = 0;
+    let mut part2 = 0;
 
     for (dir, n) in rotations {
-        if n >= 100 {
-            zeros_part2 += n / 100;
-        }
-
+        part2 += n / 100;
         let rest = n % 100;
 
-        match dir {
-            "L" => {
-                if rest >= dial && dial != 0 {
-                    zeros_part2 += 1;
-                }
-
-                if rest > dial {
-                    dial = 100 - (rest - dial)
-                } else {
-                    dial -= rest;
-                }
-            },
-            _ => {
-                if rest >= 100 - dial {
-                    zeros_part2 += 1;
-                }
-
-                dial = (dial + rest) % 100;
+        if dir == "L" {
+            if rest >= dial && dial != 0 {
+                part2 += 1;
             }
+
+            if rest > dial {
+                dial = 100 - (rest - dial)
+            } else {
+                dial -= rest;
+            }
+        } else {
+            if rest >= 100 - dial {
+                part2 += 1;
+            }
+
+            dial = (dial + rest) % 100;
         }
 
         if dial == 0 {
-            zeros_part1 += 1;
+            part1 += 1;
         }
     }
         
-    (zeros_part1, zeros_part2)
+    (part1, part2)
 }
 
 #[cfg(test)]
