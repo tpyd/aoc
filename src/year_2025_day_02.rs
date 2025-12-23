@@ -1,45 +1,50 @@
 pub fn run(input: &str) -> (u64, u64) {
-    let ranges = input
+    let ids: Vec<u64> = input
         .trim_end()
         .split(",")
         .map(|x| {
             let (first, last) = x.split_once("-").unwrap();
             first.parse::<u64>().unwrap()..=last.parse::<u64>().unwrap()
-        });
+        })
+        .flatten()
+        .collect();
 
-    let mut sum_part1 = 0;
-    let mut sum_part2 = 0;
-            
-    for range in ranges {
-        for n in range {
-            let id = n.to_string();
-            let digits = id.len();
+    let mut part1 = 0;
+    let mut part2 = 0;
 
-            // Part 1
-            let half = id.split_at(digits / 2).0;
+    for id in ids {
+        let digits = id.ilog10() + 1;
 
-            if id == half.repeat(2) {
-                sum_part1 += n; 
+        // Part 1
+        if digits % 2 == 0 {
+            let first = id / 10u64.pow(digits / 2);
+            let second = id % 10u64.pow(digits / 2);
+
+            if first == second {
+                part1 += id;
             }
+        }
 
-            // Part 2
-            for i in 1..(digits / 2) + 1 {
-                if digits % i != 0 {
-                    continue;
-                }
-
-                let pattern = &id[..i];
-                let repeated = pattern.repeat(digits / i); 
-
-                if repeated == id {
-                    sum_part2 += n;
-                    break;
-                }
+        // Part 2
+        for i in 1..=(digits / 2) {
+            let pattern = id / 10u64.pow(digits - i);
+            let pattern_len = pattern.ilog10() + 1;
+            let mut repeated = pattern * 10u64.pow(pattern_len) + pattern;
+            let mut repeated_len = repeated.ilog10() + 1;
+            
+            while repeated_len < digits {
+                repeated = repeated * 10u64.pow(pattern_len) + pattern;
+                repeated_len = repeated.ilog10() + 1;
+            }
+            
+            if id == repeated {
+                part2 += id;
+                break;
             }
         }
     }
 
-    (sum_part1, sum_part2)
+    (part1, part2)
 }
 
 #[cfg(test)]
