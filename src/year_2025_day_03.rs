@@ -1,10 +1,3 @@
-pub fn run(input: &str) -> (u64, u64) {
-    input
-        .lines()
-        .map(|x| x.as_bytes())
-        .fold((0, 0), |acc, b| (acc.0 + calculate_jolts(b, 2), acc.1 + calculate_jolts(b, 12)))
-}
-
 fn calculate_jolts(bank: &[u8], num_batteries: usize) -> u64 {
     let mut bank_joltage = 0;
     let mut index = 0;
@@ -22,6 +15,13 @@ fn calculate_jolts(bank: &[u8], num_batteries: usize) -> u64 {
     }
     
     bank_joltage
+}
+
+pub fn run(input: &str) -> (u64, u64) {
+    input
+        .lines()
+        .map(|x| x.as_bytes())
+        .fold((0, 0), |acc, b| (acc.0 + calculate_jolts(b, 2), acc.1 + calculate_jolts(b, 12)))
 }
 
 #[cfg(test)]
