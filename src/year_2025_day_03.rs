@@ -1,7 +1,6 @@
 pub fn run(input: &str) -> (u64, u64) {
     input
-        .trim_end()
-        .split('\n')
+        .lines()
         .map(|x| x.as_bytes())
         .fold((0, 0), |acc, b| (acc.0 + calculate_jolts(b, 2), acc.1 + calculate_jolts(b, 12)))
 }
@@ -19,7 +18,7 @@ fn calculate_jolts(bank: &[u8], num_batteries: usize) -> u64 {
                 index = j + 1;
             }
         }
-        bank_joltage += (max - 48) as u64 * 10u64.pow(num_batteries as u32 - 1 - i as u32);
+        bank_joltage += (max - b'0') as u64 * 10u64.pow(num_batteries as u32 - 1 - i as u32);
     }
     
     bank_joltage
