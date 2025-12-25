@@ -1,28 +1,33 @@
 use std::collections::{HashSet, VecDeque};
 
 pub fn run(input: &str) -> (usize, usize) {
-    let lines: Vec<&str> = input
-        .trim_end()
-        .split("\n")
+    let manifold: Vec<&str> = input
+        .lines()
         .collect();
 
-    let height = lines.len();
+    let height = manifold.len();
+    let width = manifold[0].len();
 
     let mut beams: VecDeque<(usize, usize, usize)> = VecDeque::new();
-    beams.push_back((lines[0].find('S').unwrap(), 0, 1));
+    beams.push_back((width / 2, 0, 1));
 
-    let splitters: HashSet<(usize, usize)> = lines[2..]
+    let splitters: HashSet<(usize, usize)> = manifold[2..]
         .iter()
         .enumerate()
-        .flat_map(|(y, line)| 
+        .flat_map(|(y, line)| {
             line
                 .chars()
                 .enumerate()
-                .filter(|(_, c)| *c == '^')
-                .map(move |(x, _)| (x, y + 2))
-        )
+                .filter_map(move |(x, c)| {
+                    if c == '^' {
+                        Some((x, y))
+                    } else {
+                        None
+                    }
+                })
+        })
         .collect();
-         
+
     let mut timelines = 0;
     let mut unique_splits = HashSet::new();
 
@@ -33,9 +38,7 @@ pub fn run(input: &str) -> (usize, usize) {
         }
 
         if splitters.contains(&(x, y)) {
-            if !unique_splits.contains(&(x, y)) {
-                unique_splits.insert((x, y));
-            }
+            unique_splits.insert((x, y));
 
             if let Some(idx) = beams.iter().position(|(fx, fy, _)| *fx == x + 1 && *fy == y + 2) {
                 let (_, _, nn) = beams.remove(idx).unwrap();
