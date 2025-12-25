@@ -1,35 +1,3 @@
-pub fn run(input: &str) -> (usize, usize) {
-    let mut rolls = input
-        .lines()
-        .map(|x| x.chars().collect::<Vec<char>>())
-        .collect::<Vec<Vec<char>>>();
-
-    let mut movable = Vec::new();
-    let mut part1 = 0;
-    let mut part2 = 0;
-
-    loop {
-        movable.clear();
-        get_movable(&rolls, &mut movable);
-
-        if movable.len() == 0 {
-            break;
-        }
-
-        if part1 == 0 {
-            part1 = movable.len();
-        }
-
-        part2 += movable.len();
-
-        for (x, y) in &movable {
-            rolls[*y][*x] = '.';
-        }
-    }
-
-    (part1, part2)
-}
-
 fn get_movable(rolls: &[Vec<char>], movable: &mut Vec<(usize, usize)>) {
     let height = rolls.len();
     let width = rolls[0].len();
@@ -112,6 +80,38 @@ fn get_movable(rolls: &[Vec<char>], movable: &mut Vec<(usize, usize)>) {
             }
         }
     }
+}
+
+pub fn run(input: &str) -> (usize, usize) {
+    let mut rolls = input
+        .lines()
+        .map(|x| x.chars().collect::<Vec<char>>())
+        .collect::<Vec<Vec<char>>>();
+
+    let mut movable = Vec::new();
+    let mut part1 = 0;
+    let mut part2 = 0;
+
+    loop {
+        movable.clear();
+        get_movable(&rolls, &mut movable);
+
+        if movable.len() == 0 {
+            break;
+        }
+
+        if part1 == 0 {
+            part1 = movable.len();
+        }
+
+        part2 += movable.len();
+
+        for (x, y) in &movable {
+            rolls[*y][*x] = '.';
+        }
+    }
+
+    (part1, part2)
 }
 
 #[cfg(test)]
