@@ -1,12 +1,11 @@
 pub fn run(input: &str) -> (u64, u64) {
     let lines: Vec<Vec<char>> = input
-        .trim_end_matches('\n')
-        .split('\n')
+        .lines()
         .map(|x| x.chars().collect::<Vec<char>>())
         .collect();
 
-    let width = lines[0].len();
     let height = lines.len();
+    let width = lines[0].len();
 
     let mut horizontal_strings: Vec<String> = Vec::with_capacity(height - 1);
     for _ in 0..height - 1 {
