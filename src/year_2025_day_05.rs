@@ -4,8 +4,8 @@ pub fn run(input: &str) -> (usize, u64) {
         .split_once("\n\n")
         .unwrap();
 
-    let mut range_values: Vec<(u64, u64)> = ranges_raw
-        .split("\n")
+    let mut ranges: Vec<(u64, u64)> = ranges_raw
+        .lines()
         .map(|row| row
             .split_once("-")
             .and_then(|(first, last)| {
@@ -17,42 +17,36 @@ pub fn run(input: &str) -> (usize, u64) {
         )
         .collect();
 
-    range_values.sort_unstable_by(|a, b| a.0.cmp(&b.0));
-
     let ids: Vec<u64> = ids_raw
-        .split("\n")
+        .lines()
         .map(|id| id.parse::<u64>().unwrap())
         .collect();
 
     // Merge ranges
-    let mut ranges: Vec<(u64, u64)> = Vec::new();
+    let mut merged: Vec<(u64, u64)> = Vec::new();
 
-    while range_values.len() >= 2 {
-        let (start, mut end) = range_values.remove(0);
+    ranges.sort_unstable_by_key(|&(s, _)| s);
 
-        loop {
-            match range_values.iter().position(|(s, _)| *s <= end + 1) {
-                Some(overlapping_range) => {
-                    let overlapping_range = range_values.remove(overlapping_range);
-                    let (_, e) = overlapping_range;
-
-                    if e > end {
-                        end = e; 
-                    }
-                },
-                None => break
+    for (start, end) in ranges {
+        if let Some(last) = merged.last_mut() {
+            if start <= last.1 + 1 {
+                if end > last.1 {
+                    last.1 = end;
+                }
+                
+                continue;
             }
         }
 
-        ranges.push((start, end));
+        merged.push((start, end));
     }
 
     let num_fresh = ids
         .iter()
-        .filter(|id| ranges.iter().any(|(start, end)| start <= id && *id <= end))
+        .filter(|id| merged.iter().any(|(start, end)| start <= id && *id <= end))
         .count();
 
-    let num_possible_fresh = ranges
+    let num_possible_fresh = merged
         .iter()
         .fold(0, |acc, (start, end)| acc + end - start + 1);
 
