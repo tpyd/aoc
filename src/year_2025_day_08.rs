@@ -1,24 +1,17 @@
-use std::{cmp::Reverse, collections::{BinaryHeap, HashSet}};
-
-#[derive(PartialEq, PartialOrd)]
-struct Distance(f32, usize, usize);
-
-impl Eq for Distance {}
-
-impl Ord for Distance {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.0.total_cmp(&other.0)
+fn find(i: usize, parents: &mut [usize]) -> usize {
+    if i != parents[i] {
+        let root = find(parents[i], parents);
+        parents[i] = root;
     }
+
+    return parents[i];
 }
 
-type MinDistance = Reverse<Distance>;
-
-pub fn run(input: &str) -> (usize, i64) {
+pub fn run(input: &str) -> (u32, i64) {
     let num_connections = if input.len() < 1000 { 10 } else { 1000 };
 
-    let box_locations: Vec<(i64, i64, i64)> = input
-        .trim_end()
-        .split("\n")
+    let boxes: Vec<(i64, i64, i64)> = input
+        .lines()
         .map(|junction_box| {
             let parts: Vec<&str> = junction_box.split(",").collect();
 
@@ -30,72 +23,68 @@ pub fn run(input: &str) -> (usize, i64) {
         })
         .collect();
 
-    let mut distances: BinaryHeap<MinDistance> = BinaryHeap::new();
+    let mut distances = Vec::new();
 
-    for i in 0..box_locations.len() - 1 {
-        for j in i+1..box_locations.len() {
-            let (x1, y1, z1) = box_locations[i]; 
-            let (x2, y2, z2) = box_locations[j]; 
+    for i in 0..boxes.len() - 1 {
+        for j in i+1..boxes.len() {
+            let (x1, y1, z1) = boxes[i]; 
+            let (x2, y2, z2) = boxes[j]; 
 
-            let distance = ((x2 - x1).pow(2) + (y2 - y1).pow(2) + (z2 - z1).pow(2)) as f32;
+            let distance = (x2 - x1).pow(2) + (y2 - y1).pow(2) + (z2 - z1).pow(2);
 
-            distances.push(Reverse(Distance(distance, i, j)));
+            distances.push((distance, i, j));
         }
     }
 
-    let mut connections: Vec<HashSet<usize>> = Vec::new();
-    for i in 0..box_locations.len() {
-        let mut set = HashSet::new();
-        set.insert(i);
-        connections.push(set);
+    distances.sort_unstable_by(|a, b| b.0.cmp(&a.0));
+
+    let mut parents = Vec::new();
+    for i in 0..boxes.len() {
+        parents.push(i);
+    }
+
+    let mut sizes = Vec::new();
+    for _ in 0..boxes.len() {
+        sizes.push(1u32);
     }
 
     let mut part1 = 0;
     let mut part2 = 0;
-    let mut counter = 0;
 
-    loop {
-        let Reverse(Distance(_, idx1, idx2)) = distances.pop().unwrap();
+    let mut connections = 0;
 
-        let matches: Vec<usize> = connections
-            .iter()
-            .enumerate()
-            .filter(|(_, s)| s.contains(&idx1) || s.contains(&idx2))
-            .map(|(idx, _)| idx)
-            .collect();
-        
-        // Merge if we have two different sets
-        if matches.len() == 2 {
-            let mut set1 = connections.remove(matches[0].max(matches[1]));
-            let set2 = connections.remove(matches[0].min(matches[1]));
-            set1.extend(&set2);
-            connections.push(set1);
+    while let Some((_, a, b)) = distances.pop() {
+        connections += 1;
 
-            if connections.len() == 1 && counter > num_connections {
-                let (x1, _, _) = box_locations[idx1];
-                let (x2, _, _) = box_locations[idx2];
-                part2 = x1 * x2;
-            }
-        } else {
-            let mut set = connections.remove(matches[0]);
-            set.insert(idx1);
-            set.insert(idx2);
-            connections.push(set);
+        let mut p1 = find(a, &mut parents);
+        let mut p2 = find(b, &mut parents);
+
+        if p1 == p2 {
+            continue;
         }
 
-        counter += 1;
+        if sizes[p1] < sizes[p2] {
+            std::mem::swap(&mut p1, &mut p2);
+        }
 
-        if counter == num_connections {
-            connections.sort_unstable_by(|a, b| b.len().cmp(&a.len()));
+        parents[p2] = parents[p1];
+        sizes[p1] += sizes[p2];
 
-            part1 = connections
+        // Part 1
+        if connections >= num_connections && part1 == 0 {
+            let mut sizes_copy = sizes.clone();
+            sizes_copy.sort_unstable_by(|a, b| b.cmp(&a));
+
+            part1 = sizes_copy
                 .iter()
                 .take(3)
-            .fold(1, |acc, s| acc * s.len());
+                .product();
         }
 
-        if connections.len() == 1 && counter > num_connections {
-            break; 
+        part2 = boxes[a].0 * boxes[b].0;
+
+        if *sizes.iter().max().unwrap() as usize == boxes.len() {
+            break;
         }
     }
 
