@@ -1,3 +1,5 @@
+use std::{cmp::Reverse, collections::BinaryHeap};
+
 fn find(i: usize, parents: &mut [usize]) -> usize {
     if i != parents[i] {
         let root = find(parents[i], parents);
@@ -23,7 +25,7 @@ pub fn run(input: &str) -> (u32, i64) {
         })
         .collect();
 
-    let mut distances = Vec::new();
+    let mut distances: BinaryHeap<Reverse<(i64, usize, usize)>> = BinaryHeap::new();
 
     for i in 0..boxes.len() - 1 {
         for j in i+1..boxes.len() {
@@ -32,11 +34,9 @@ pub fn run(input: &str) -> (u32, i64) {
 
             let distance = (x2 - x1).pow(2) + (y2 - y1).pow(2) + (z2 - z1).pow(2);
 
-            distances.push((distance, i, j));
+            distances.push(Reverse((distance, i, j)));
         }
     }
-
-    distances.sort_unstable_by(|a, b| b.0.cmp(&a.0));
 
     let mut parents = Vec::new();
     for i in 0..boxes.len() {
@@ -53,7 +53,7 @@ pub fn run(input: &str) -> (u32, i64) {
 
     let mut connections = 0;
 
-    while let Some((_, a, b)) = distances.pop() {
+    while let Some(Reverse((_, a, b))) = distances.pop() {
         connections += 1;
 
         let mut p1 = find(a, &mut parents);
