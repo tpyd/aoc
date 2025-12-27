@@ -12,14 +12,14 @@ fn get_movable(rolls: &[Vec<char>], movable: &mut Vec<(usize, usize)>) {
 
             if y > 0 {
                 // Top
-                let cell = rolls[y - 1][x];  
+                let cell = rolls[y - 1][x];
                 if cell == '@' {
                     adjacent += 1;
                 }
 
                 // Top-left
                 if x > 0 {
-                    let cell = rolls[y - 1][x - 1];  
+                    let cell = rolls[y - 1][x - 1];
                     if cell == '@' {
                         adjacent += 1;
                     }
@@ -27,7 +27,7 @@ fn get_movable(rolls: &[Vec<char>], movable: &mut Vec<(usize, usize)>) {
 
                 // Top-right
                 if x < width - 1 {
-                    let cell = rolls[y - 1][x + 1];  
+                    let cell = rolls[y - 1][x + 1];
                     if cell == '@' {
                         adjacent += 1;
                     }
@@ -36,7 +36,7 @@ fn get_movable(rolls: &[Vec<char>], movable: &mut Vec<(usize, usize)>) {
 
             // Left
             if x > 0 {
-                let cell = rolls[y][x - 1];  
+                let cell = rolls[y][x - 1];
                 if cell == '@' {
                     adjacent += 1;
                 }
@@ -44,7 +44,7 @@ fn get_movable(rolls: &[Vec<char>], movable: &mut Vec<(usize, usize)>) {
 
             // Right
             if x < width - 1 {
-                let cell = rolls[y][x + 1];  
+                let cell = rolls[y][x + 1];
                 if cell == '@' {
                     adjacent += 1;
                 }
@@ -59,16 +59,15 @@ fn get_movable(rolls: &[Vec<char>], movable: &mut Vec<(usize, usize)>) {
 
                 // Bottom-left
                 if x > 0 {
-                    let cell = rolls[y + 1][x - 1];  
+                    let cell = rolls[y + 1][x - 1];
                     if cell == '@' {
                         adjacent += 1;
                     }
                 }
 
-
                 // Bottom-right
                 if x < width - 1 {
-                    let cell = rolls[y + 1][x + 1];  
+                    let cell = rolls[y + 1][x + 1];
                     if cell == '@' {
                         adjacent += 1;
                     }
@@ -130,9 +129,9 @@ mod tests {
 .@.@.@.@@@
 @.@@@.@@@@
 .@@@@@@@@.
-@.@.@@@.@."); 
+@.@.@@@.@.");
         assert_eq!(part1, 13);
-    }    
+    }
 
     #[test]
     fn test_part2() {
@@ -145,7 +144,7 @@ mod tests {
 .@.@.@.@@@
 @.@@@.@@@@
 .@@@@@@@@.
-@.@.@@@.@."); 
+@.@.@@@.@.");
         assert_eq!(part2, 43);
     }
 
@@ -158,4 +157,3 @@ mod tests {
         assert_eq!(part2, 9050);
     }
 }
-

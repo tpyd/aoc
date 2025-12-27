@@ -6,15 +6,15 @@ pub fn run(input: &str) -> (usize, u64) {
 
     let mut ranges: Vec<(u64, u64)> = ranges_raw
         .lines()
-        .map(|row| row
-            .split_once("-")
-            .map(|(first, last)| {
-                let start = first.parse::<u64>().unwrap();
-                let end = last.parse::<u64>().unwrap();
-                (start, end)
-            })
-            .unwrap()
-        )
+        .map(|row| {
+            row.split_once("-")
+                .map(|(first, last)| {
+                    let start = first.parse::<u64>().unwrap();
+                    let end = last.parse::<u64>().unwrap();
+                    (start, end)
+                })
+                .unwrap()
+        })
         .collect();
 
     let ids: Vec<u64> = ids_raw
@@ -33,7 +33,7 @@ pub fn run(input: &str) -> (usize, u64) {
                 if end > last.1 {
                     last.1 = end;
                 }
-                
+
                 continue;
             }
         }
@@ -70,9 +70,9 @@ mod tests {
 8
 11
 17
-32"); 
+32");
         assert_eq!(part1, 3);
-    }    
+    }
 
     #[test]
     fn test_part2() {
@@ -86,7 +86,7 @@ mod tests {
 8
 11
 17
-32"); 
+32");
         assert_eq!(part2, 14);
     }
 
@@ -99,4 +99,3 @@ mod tests {
         assert_eq!(part2, 359526404143208);
     }
 }
-

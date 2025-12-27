@@ -1,19 +1,11 @@
 use std::collections::{HashMap, VecDeque};
 
-fn paths(
-    graph: &HashMap<&str, Vec<&str>>, 
-    from: &str, 
-    to: &str, 
-    sorted: &[&str]
-) -> u64 {
-    let mut dp: HashMap<&str, u64> = graph
-        .keys()
-        .map(|&k| (k, 0))
-        .collect();
+fn paths(graph: &HashMap<&str, Vec<&str>>, from: &str, to: &str, sorted: &[&str]) -> u64 {
+    let mut dp: HashMap<&str, u64> = graph.keys().map(|&k| (k, 0)).collect();
 
     dp.insert(from, 1);
-    dp.insert(to, 0);  // Neccessary for part 1 test since it doesn't have fft or dac
-                               
+    dp.insert(to, 0); // Neccessary for part 1 test since it doesn't have fft or dac
+
     for u in sorted.iter().take_while(|x| **x != to) {
         let &u_val = dp.get(u).unwrap();
 
@@ -22,8 +14,7 @@ fn paths(
         }
 
         for v in graph.get(u).unwrap() {
-            dp.entry(v)
-                .and_modify(|e| *e += u_val);
+            dp.entry(v).and_modify(|e| *e += u_val);
         }
     }
 
@@ -31,17 +22,13 @@ fn paths(
 }
 
 pub fn run(input: &str) -> (u64, u64) {
-    let lines = input
-        .trim_end()
-        .replace(":", "");
-    
+    let input_raw = input.replace(":", "");
+
     let mut graph: HashMap<&str, Vec<&str>> = HashMap::new();
     let mut incoming: HashMap<&str, u32> = HashMap::new();
 
-    for line in lines.split("\n") {
-        let parts: Vec<&str> = line
-            .split_whitespace()
-            .collect();
+    for line in input_raw.lines() {
+        let parts: Vec<&str> = line.split_whitespace().collect();
         let u = parts[0];
         let v = &parts[1..];
 
@@ -61,7 +48,8 @@ pub fn run(input: &str) -> (u64, u64) {
     }
 
     // Topological sort
-    let mut queue: VecDeque<&str> = incoming.iter()
+    let mut queue: VecDeque<&str> = incoming
+        .iter()
         .filter(|(_, v)| **v == 0)
         .map(|(&k, _)| k)
         .collect();
@@ -122,9 +110,9 @@ eee: out
 fff: out
 ggg: out
 hhh: ccc fff iii
-iii: out"); 
+iii: out");
         assert_eq!(part1, 5);
-    }    
+    }
 
     #[test]
     fn test_part2() {
@@ -140,7 +128,7 @@ eee: dac
 dac: fff
 fff: ggg hhh
 ggg: out
-hhh: out"); 
+hhh: out");
         assert_eq!(part2, 2);
     }
 
@@ -153,4 +141,3 @@ hhh: out");
         assert_eq!(part2, 511378159390560);
     }
 }
-

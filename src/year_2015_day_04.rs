@@ -47,7 +47,7 @@ pub fn run(input: &str) -> (u32, u32) {
         offset = trimmed_input.len();
 
         let mut n = num;
-        let mut i = 0; 
+        let mut i = 0;
         loop {
             digits[i] = b'0' + (n % 10) as u8;
             n /= 10;
@@ -66,7 +66,7 @@ pub fn run(input: &str) -> (u32, u32) {
         offset += i;
 
         hash_input[offset] = 0x80;
-        
+
         let input_length: u64 = (trimmed_input.len() + i) as u64 * 8;
         hash_input[56..64].copy_from_slice(&input_length.to_le_bytes());
 
@@ -95,7 +95,7 @@ pub fn run(input: &str) -> (u32, u32) {
                     f = (db & dc) | (!db & dd);
                     g = i;
                 } else if i <= 31 {
-                    f = (dd & db) | (!dd & dc); 
+                    f = (dd & db) | (!dd & dc);
                     g = (5 * i + 1) % 16;
                 } else if i <= 47 {
                     f = db ^ dc ^ dd;
@@ -119,7 +119,7 @@ pub fn run(input: &str) -> (u32, u32) {
         }
 
         let digest = &a.to_le_bytes();
-        
+
         if digest[0] == 0 && digest[1] == 0 && (digest[2] & 0xf0) == 0 && part1 == 0 {
             part1 = num;
         }
@@ -138,7 +138,6 @@ pub fn run(input: &str) -> (u32, u32) {
     (part1, part2)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -146,12 +145,12 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        let (part1, _) = run("abcdef"); 
+        let (part1, _) = run("abcdef");
         assert_eq!(part1, 609043);
 
-        let (part1, _) = run("pqrstuv"); 
+        let (part1, _) = run("pqrstuv");
         assert_eq!(part1, 1048970);
-    }    
+    }
 
     #[test]
     fn test_real() {
@@ -162,4 +161,3 @@ mod tests {
         assert_eq!(part2, 9962624);
     }
 }
-

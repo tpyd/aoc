@@ -55,7 +55,7 @@ pub fn run(input: &str) -> (i64, i64) {
             let max_y = y1.max(y2);
 
             let area = (max_x - min_x + 1) * (max_y - min_y + 1);
-            
+
             if area > largest_part1 {
                 largest_part1 = area;
             }
@@ -90,9 +90,9 @@ mod tests {
 9,5
 2,5
 2,3
-7,3"); 
+7,3");
         assert_eq!(part1, 50);
-    }    
+    }
 
     #[test]
     fn test_part2() {
@@ -103,7 +103,7 @@ mod tests {
 9,5
 2,5
 2,3
-7,3"); 
+7,3");
         assert_eq!(part2, 24);
     }
 
@@ -116,4 +116,3 @@ mod tests {
         assert_eq!(part2, 1562459680);
     }
 }
-

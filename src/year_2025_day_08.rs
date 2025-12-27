@@ -21,16 +21,16 @@ pub fn run(input: &str) -> (u32, i64) {
             let y = parts[1].parse::<i64>().unwrap();
             let z = parts[2].parse::<i64>().unwrap();
 
-            (x, y, z) 
+            (x, y, z)
         })
         .collect();
 
     let mut distances: BinaryHeap<Reverse<(i64, usize, usize)>> = BinaryHeap::new();
 
     for i in 0..boxes.len() - 1 {
-        for j in i+1..boxes.len() {
-            let (x1, y1, z1) = boxes[i]; 
-            let (x2, y2, z2) = boxes[j]; 
+        for j in i + 1..boxes.len() {
+            let (x1, y1, z1) = boxes[i];
+            let (x2, y2, z2) = boxes[j];
 
             let distance = (x2 - x1).pow(2) + (y2 - y1).pow(2) + (z2 - z1).pow(2);
 
@@ -114,9 +114,9 @@ mod tests {
 941,993,340
 862,61,35
 984,92,344
-425,690,689"); 
+425,690,689");
         assert_eq!(part1, 40);
-    }    
+    }
 
     #[test]
     fn test_part2() {
@@ -139,7 +139,7 @@ mod tests {
 941,993,340
 862,61,35
 984,92,344
-425,690,689"); 
+425,690,689");
         assert_eq!(part2, 25272);
     }
 
@@ -152,4 +152,3 @@ mod tests {
         assert_eq!(part2, 975931446);
     }
 }
-

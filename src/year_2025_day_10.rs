@@ -1,9 +1,6 @@
 use std::collections::{hash_map::Entry, HashMap};
 
-fn combinations(
-    buttons: &[Vec<usize>], 
-    len: usize
-) -> HashMap<u32, Vec<(Vec<i32>, u32)>> {
+fn combinations(buttons: &[Vec<usize>], len: usize) -> HashMap<u32, Vec<(Vec<i32>, u32)>> {
     let max_len = 2usize.pow(buttons.len() as u32);
 
     let mut paths: Vec<(Vec<i32>, u32)> = Vec::with_capacity(max_len);
@@ -17,7 +14,7 @@ fn combinations(
         for (acc_button, presses) in &paths {
             let mut new_acc_button = acc_button.clone();
             for j in button {
-                new_acc_button[*j] += 1; 
+                new_acc_button[*j] += 1;
             }
 
             if i == buttons.len() - 1 {
@@ -64,7 +61,7 @@ fn combinations(
 }
 
 fn find(
-    joltages: &[i32], 
+    joltages: &[i32],
     button_combinations: &HashMap<u32, Vec<(Vec<i32>, u32)>>,
     cache: &mut HashMap<Vec<i32>, u32>
 ) -> u32 {
@@ -123,7 +120,7 @@ pub fn run(input: &str) -> (u32, u32) {
     for line in lines {
         let (lights_str, rest) = line.split_once(" ").unwrap();
         let (buttons_str, joltages_str) = rest.rsplit_once(" ").unwrap();
-        
+
         let light_goal = lights_str
             .chars()
             .filter(|v| *v == '#' || *v == '.')
@@ -133,11 +130,13 @@ pub fn run(input: &str) -> (u32, u32) {
 
         let buttons: Vec<Vec<usize>> = buttons_str
             .split_whitespace()
-            .map(|button| button
-                .chars()
-                .filter(|c| c.is_ascii_digit())
-                .map(|n| n.to_digit(10).unwrap() as usize)
-                .collect())
+            .map(|button| {
+                button
+                    .chars()
+                    .filter(|c| c.is_ascii_digit())
+                    .map(|n| n.to_digit(10).unwrap() as usize)
+                    .collect()
+            })
             .collect();
 
         let joltages: Vec<i32> = joltages_str
@@ -147,7 +146,7 @@ pub fn run(input: &str) -> (u32, u32) {
             .collect();
 
         let len = joltages.len();
-        let button_combinations = combinations(&buttons, len); 
+        let button_combinations = combinations(&buttons, len);
 
         part1 += button_combinations
             .get(&light_goal)
@@ -172,15 +171,15 @@ mod tests {
     fn test_part1() {
         let (part1, _) = run("[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
 [...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}
-[.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}"); 
+[.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}");
         assert_eq!(part1, 7);
-    }    
+    }
 
     #[test]
     fn test_part2() {
         let (_, part2) = run("[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
 [...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}
-[.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}"); 
+[.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}");
         assert_eq!(part2, 33);
     }
 
@@ -193,4 +192,3 @@ mod tests {
         assert_eq!(part2, 16757);
     }
 }
-

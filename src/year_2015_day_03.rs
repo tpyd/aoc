@@ -36,7 +36,7 @@ pub fn run(input: &str) -> (usize, usize) {
             santas_turn = true;
         }
     }
-    
+
     (part1_visited.len(), part2_visited.len())
 }
 
@@ -47,25 +47,25 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        let (part1, _) = run(">"); 
+        let (part1, _) = run(">");
         assert_eq!(part1, 2);
 
-        let (part1, _) = run("^>v<"); 
+        let (part1, _) = run("^>v<");
         assert_eq!(part1, 4);
 
-        let (part1, _) = run("^v^v^v^v^v"); 
+        let (part1, _) = run("^v^v^v^v^v");
         assert_eq!(part1, 2);
-    }    
+    }
 
     #[test]
     fn test_part2() {
-        let (_, part2) = run("^v"); 
+        let (_, part2) = run("^v");
         assert_eq!(part2, 3);
 
-        let (_, part2) = run("^>v<"); 
+        let (_, part2) = run("^>v<");
         assert_eq!(part2, 3);
 
-        let (_, part2) = run("^v^v^v^v^v"); 
+        let (_, part2) = run("^v^v^v^v^v");
         assert_eq!(part2, 11);
     }
 
@@ -78,4 +78,3 @@ mod tests {
         assert_eq!(part2, 2360);
     }
 }
-

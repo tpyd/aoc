@@ -26,40 +26,40 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        let (part1, _) = run("(())"); 
+        let (part1, _) = run("(())");
         assert_eq!(part1, 0);
 
-        let (part1, _) = run("()()"); 
+        let (part1, _) = run("()()");
         assert_eq!(part1, 0);
 
-        let (part1, _) = run("((("); 
+        let (part1, _) = run("(((");
         assert_eq!(part1, 3);
 
-        let (part1, _) = run("(()(()("); 
+        let (part1, _) = run("(()(()(");
         assert_eq!(part1, 3);
 
-        let (part1, _) = run("))((((("); 
+        let (part1, _) = run("))(((((");
         assert_eq!(part1, 3);
 
-        let (part1, _) = run("())"); 
+        let (part1, _) = run("())");
         assert_eq!(part1, -1);
 
-        let (part1, _) = run("))("); 
+        let (part1, _) = run("))(");
         assert_eq!(part1, -1);
 
-        let (part1, _) = run(")))"); 
+        let (part1, _) = run(")))");
         assert_eq!(part1, -3);
 
-        let (part1, _) = run(")())())"); 
+        let (part1, _) = run(")())())");
         assert_eq!(part1, -3);
-    }    
+    }
 
     #[test]
     fn test_part2() {
-        let (_, part2) = run(")"); 
+        let (_, part2) = run(")");
         assert_eq!(part2, 1);
 
-        let (_, part2) = run("()())"); 
+        let (_, part2) = run("()())");
         assert_eq!(part2, 5);
     }
 
@@ -72,4 +72,3 @@ mod tests {
         assert_eq!(part2, 1771);
     }
 }
-

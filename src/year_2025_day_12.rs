@@ -11,7 +11,7 @@ pub fn run(input: &str) -> (i32, Option<i32>) {
     if regions.len() < 10 {
         return (2, None);
     }
-        
+
     let mut part1 = 0;
 
     for region in regions {
@@ -78,9 +78,9 @@ mod tests {
 4x4: 0 0 0 0 2 0
 12x5: 1 0 1 0 2 2
 12x5: 1 0 1 0 3 2
-"); 
+");
         assert_eq!(part1, 2);
-    }    
+    }
 
     #[test]
     fn test_real() {
@@ -90,4 +90,3 @@ mod tests {
         assert_eq!(part1, 519);
     }
 }
-

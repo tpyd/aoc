@@ -9,7 +9,7 @@ pub fn run(input: &str) -> (u64, u64) {
 
     let mut horizontal_strings: Vec<String> = Vec::with_capacity(height - 1);
     for _ in 0..height - 1 {
-        horizontal_strings.push(String::with_capacity(height - 1)); 
+        horizontal_strings.push(String::with_capacity(height - 1));
     }
 
     let mut vertical_values: Vec<u64> = Vec::with_capacity(height - 1);
@@ -56,12 +56,12 @@ pub fn run(input: &str) -> (u64, u64) {
             continue;
         }
 
-        let value = vertical_string.parse::<u64>().unwrap(); 
+        let value = vertical_string.parse::<u64>().unwrap();
         vertical_values.push(value);
 
         // Operator is always on the left
         if vertical_values.len() == 1 {
-            operator = lines[height - 1][col]; 
+            operator = lines[height - 1][col];
         }
     }
 
@@ -93,16 +93,16 @@ mod tests {
         let (part1, _) = run("123 328  51 64 
  45 64  387 23 
   6 98  215 314
-*   +   *   +  "); 
+*   +   *   +  ");
         assert_eq!(part1, 4277556);
-    }    
+    }
 
     #[test]
     fn test_part2() {
         let (_, part2) = run("123 328  51 64 
  45 64  387 23 
   6 98  215 314
-*   +   *   +  "); 
+*   +   *   +  ");
         assert_eq!(part2, 3263827);
     }
 
@@ -115,4 +115,3 @@ mod tests {
         assert_eq!(part2, 9077004354241);
     }
 }
-

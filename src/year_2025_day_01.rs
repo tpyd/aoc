@@ -36,7 +36,7 @@ pub fn run(input: &str) -> (i32, i32) {
             part1 += 1;
         }
     }
-        
+
     (part1, part2)
 }
 
@@ -56,9 +56,9 @@ L55
 L1
 L99
 R14
-L82"); 
+L82");
         assert_eq!(part1, 3);
-    }    
+    }
 
     #[test]
     fn test_part2() {
@@ -71,7 +71,7 @@ L55
 L1
 L99
 R14
-L82"); 
+L82");
         assert_eq!(part2, 6);
     }
 
@@ -84,4 +84,3 @@ L82");
         assert_eq!(part2, 6561);
     }
 }
-

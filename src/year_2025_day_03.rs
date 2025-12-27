@@ -5,7 +5,7 @@ fn calculate_jolts(bank: &[u8], num_batteries: usize) -> u64 {
     for n in 0..num_batteries {
         let mut max = bank[index];
         index += 1;
-        
+
         let rest = bank
             .iter()
             .enumerate()
@@ -21,7 +21,7 @@ fn calculate_jolts(bank: &[u8], num_batteries: usize) -> u64 {
 
         bank_joltage += (max - b'0') as u64 * 10u64.pow(num_batteries as u32 - 1 - n as u32);
     }
-    
+
     bank_joltage
 }
 
@@ -42,16 +42,16 @@ mod tests {
         let (part1, _) = run("987654321111111
 811111111111119
 234234234234278
-818181911112111"); 
+818181911112111");
         assert_eq!(part1, 357);
-    }    
+    }
 
     #[test]
     fn test_part2() {
         let (_, part2) = run("987654321111111
 811111111111119
 234234234234278
-818181911112111"); 
+818181911112111");
         assert_eq!(part2, 3121910778619);
     }
 
@@ -64,4 +64,3 @@ mod tests {
         assert_eq!(part2, 172162399742349);
     }
 }
-

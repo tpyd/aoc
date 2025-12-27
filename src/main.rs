@@ -54,4 +54,3 @@ fn main() {
         (_, _) => println!("Could not find year/day combination")
     }
 }
-

@@ -1,6 +1,6 @@
 use aoc::utils::read_input;
-use criterion::{criterion_group, criterion_main, Criterion};
 use aoc::year_2025_day_03;
+use criterion::{criterion_group, criterion_main, Criterion};
 
 fn bench_year_2025_day_03(c: &mut Criterion) {
     let mut group = c.benchmark_group("year_2025_day_03");
@@ -13,4 +13,3 @@ fn bench_year_2025_day_03(c: &mut Criterion) {
 
 criterion_group!(benches, bench_year_2025_day_03);
 criterion_main!(benches);
-

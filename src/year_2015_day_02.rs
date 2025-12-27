@@ -39,12 +39,12 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        let (part1, _) = run("2x3x4"); 
+        let (part1, _) = run("2x3x4");
         assert_eq!(part1, 58);
 
-        let (part1, _) = run("1x1x10"); 
+        let (part1, _) = run("1x1x10");
         assert_eq!(part1, 43);
-    }    
+    }
 
     #[test]
     fn test_part2() {
