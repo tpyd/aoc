@@ -14,13 +14,13 @@ pub fn run(input: &str) -> (u32, u32) {
         );
 
         let surface = 2*l*w + 2*w*h + 2*h*l;
-        let sides = vec![l*w, w*h, h*l];
+        let sides = [l*w, w*h, h*l];
         let extra = sides.iter().min().unwrap();
 
         let total = surface + extra;
         wrapping_paper += total;
 
-        let mut lengths = vec![l, w, h];
+        let mut lengths = [l, w, h];
         lengths.sort_unstable();
         let side1 = lengths[0];
         let side2 = lengths[1];

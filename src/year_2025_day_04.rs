@@ -96,7 +96,7 @@ pub fn run(input: &str) -> (usize, usize) {
         movable.clear();
         get_movable(&rolls, &mut movable);
 
-        if movable.len() == 0 {
+        if movable.is_empty() {
             break;
         }
 

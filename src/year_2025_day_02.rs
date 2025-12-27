@@ -2,11 +2,10 @@ pub fn run(input: &str) -> (u64, u64) {
     let ids: Vec<u64> = input
         .trim_end()
         .split(",")
-        .map(|x| {
+        .flat_map(|x| {
             let (first, last) = x.split_once("-").unwrap();
             first.parse::<u64>().unwrap()..=last.parse::<u64>().unwrap()
         })
-        .flatten()
         .collect();
 
     let mut part1 = 0;

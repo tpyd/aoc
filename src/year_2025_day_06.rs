@@ -48,8 +48,8 @@ pub fn run(input: &str) -> (u64, u64) {
                 _ => vertical_values.iter().product()
             };
 
-            for i in 0..height - 1 {
-                horizontal_strings[i].clear();
+            for s in horizontal_strings.iter_mut() {
+                s.clear();
             }
             vertical_values.clear();
 

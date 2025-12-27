@@ -22,23 +22,22 @@ fn combinations(
 
             if i == buttons.len() - 1 {
                 let mut parity_pressed = 0u32;
-                for j in 0..new_acc_button.len() {
-                    if new_acc_button[j] % 2 != 0 {
+                for (j, new_acc) in new_acc_button.iter().enumerate() {
+                    if new_acc % 2 != 0 {
                         parity_pressed += 1 << j;
                     }
                 }
 
                 let mut parity_not_pressed = 0u32;
-                for j in 0..acc_button.len() {
-                    if acc_button[j] % 2 != 0 {
+                for (j, acc) in acc_button.iter().enumerate() {
+                    if acc % 2 != 0 {
                         parity_not_pressed += 1 << j;
                     }
                 }
 
                 match combinations.entry(parity_pressed) {
                     Entry::Occupied(mut e) => {
-                        let ref mut vec = *e.get_mut();
-                        vec.push((new_acc_button, presses + 1));
+                        e.get_mut().push((new_acc_button, presses + 1));
                     },
                     Entry::Vacant(e) => {
                         e.insert(vec![(new_acc_button, presses + 1)]);
@@ -47,8 +46,7 @@ fn combinations(
 
                 match combinations.entry(parity_not_pressed) {
                     Entry::Occupied(mut e) => {
-                        let ref mut vec = *e.get_mut();
-                        vec.push((acc_button.to_vec(), *presses));
+                        e.get_mut().push((acc_button.to_vec(), *presses));
                     },
                     Entry::Vacant(e) => {
                         e.insert(vec![(acc_button.to_vec(), *presses)]);

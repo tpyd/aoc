@@ -6,7 +6,7 @@ fn find(i: usize, parents: &mut [usize]) -> usize {
         parents[i] = root;
     }
 
-    return parents[i];
+    parents[i]
 }
 
 pub fn run(input: &str) -> (u32, i64) {
@@ -43,10 +43,7 @@ pub fn run(input: &str) -> (u32, i64) {
         parents.push(i);
     }
 
-    let mut sizes = Vec::new();
-    for _ in 0..boxes.len() {
-        sizes.push(1u32);
-    }
+    let mut sizes = vec![1u32; boxes.len()];
 
     let mut part1 = 0;
     let mut part2 = 0;
@@ -73,7 +70,7 @@ pub fn run(input: &str) -> (u32, i64) {
         // Part 1
         if connections >= num_connections && part1 == 0 {
             let mut sizes_copy = sizes.clone();
-            sizes_copy.sort_unstable_by(|a, b| b.cmp(&a));
+            sizes_copy.sort_unstable_by(|a, b| b.cmp(a));
 
             part1 = sizes_copy
                 .iter()

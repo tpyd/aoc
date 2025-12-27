@@ -2,16 +2,24 @@ fn calculate_jolts(bank: &[u8], num_batteries: usize) -> u64 {
     let mut bank_joltage = 0;
     let mut index = 0;
 
-    for i in 0..num_batteries {
+    for n in 0..num_batteries {
         let mut max = bank[index];
         index += 1;
-        for j in index..bank.len() - (num_batteries - 1 - i) {
-            if bank[j] > max {
-                max = bank[j];
-                index = j + 1;
+        
+        let rest = bank
+            .iter()
+            .enumerate()
+            .take(bank.len() - (num_batteries - 1 - n))
+            .skip(index);
+
+        for (i, &b) in rest {
+            if b > max {
+                max = b;
+                index = i + 1;
             }
         }
-        bank_joltage += (max - b'0') as u64 * 10u64.pow(num_batteries as u32 - 1 - i as u32);
+
+        bank_joltage += (max - b'0') as u64 * 10u64.pow(num_batteries as u32 - 1 - n as u32);
     }
     
     bank_joltage

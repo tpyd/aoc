@@ -8,10 +8,10 @@ pub fn run(input: &str) -> (usize, u64) {
         .lines()
         .map(|row| row
             .split_once("-")
-            .and_then(|(first, last)| {
+            .map(|(first, last)| {
                 let start = first.parse::<u64>().unwrap();
                 let end = last.parse::<u64>().unwrap();
-                Some((start, end))
+                (start, end)
             })
             .unwrap()
         )

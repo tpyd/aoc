@@ -23,7 +23,7 @@ fn paths(
 
         for v in graph.get(u).unwrap() {
             dp.entry(v)
-                .and_modify(|e| *e = *e + u_val);
+                .and_modify(|e| *e += u_val);
         }
     }
 
@@ -55,7 +55,7 @@ pub fn run(input: &str) -> (u64, u64) {
         for v in graph.get(u).unwrap() {
             incoming
                 .entry(v)
-                .and_modify(|e| *e = *e + 1)
+                .and_modify(|e| *e += 1)
                 .or_insert(1);
         }
     }
@@ -80,7 +80,7 @@ pub fn run(input: &str) -> (u64, u64) {
             incoming
                 .entry(v)
                 .and_modify(|e| {
-                    *e = *e - 1;
+                    *e -= 1;
                     if *e == 0 {
                         queue.push_back(v); 
                     }
@@ -89,19 +89,19 @@ pub fn run(input: &str) -> (u64, u64) {
     }
 
     let part1 = paths(&graph, "you", "out", &sorted);
-    let part2;
 
     let s2f = paths(&graph, "svr", "fft", &sorted);
     let s2d = paths(&graph, "svr", "dac", &sorted);
-    if s2f < s2d {
+
+    let part2 = if s2f < s2d {
         let f2d = paths(&graph, "fft", "dac", &sorted);
         let d2o = paths(&graph, "dac", "out", &sorted);
-        part2 = s2f * f2d * d2o;
+        s2f * f2d * d2o
     } else {
         let d2f = paths(&graph, "dac", "fft", &sorted);
         let f2o = paths(&graph, "fft", "out", &sorted);
-        part2 = s2d * d2f * f2o;
-    }
+        s2d * d2f * f2o
+    };
 
     (part1, part2)
 }
