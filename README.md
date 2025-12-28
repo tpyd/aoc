@@ -12,7 +12,10 @@
 `cargo run <year> <day>`
 
 ## Run tests
-`cargo test -- year_<year>_day_<day>`
+`cargo test year_<year>_day_<day>`
+`cargo test <year>_day_<day>`
+`cargo test <year>`
+`cargo test part1`
 
 ## Benchmark
 `cargo bench --bench year_<year>_day_<day>`
