@@ -1,10 +1,9 @@
 pub fn run(input: &str) -> (i32, Option<i32>) {
     let regions: Vec<&str> = input
-        .trim_end()
         .split("\n\n")
         .last()
         .unwrap()
-        .split("\n")
+        .lines()
         .collect();
 
     // Testcase
