@@ -28,4 +28,3 @@ mod tests {
         assert_eq!(part2, );
     }
 }
-
