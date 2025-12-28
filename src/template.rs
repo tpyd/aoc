@@ -9,13 +9,13 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        let (part1, _) = run("example"); 
+        let (part1, _) = run("example");
         assert_eq!(part1, );
-    }    
+    }
 
     #[test]
     fn test_part2() {
-        let (_, part2) = run("example"); 
+        let (_, part2) = run("example");
         assert_eq!(part2, );
     }
 
